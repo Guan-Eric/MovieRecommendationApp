@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>movieRecommendor</artifactId>
+	<artifactId>movie-recommendation-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>movieRecommendor</name>
 	<description>Movie Recommendation App</description>
