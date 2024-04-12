@@ -9,32 +9,32 @@ import java.io.Serializable;
 public class UserMovieId implements Serializable {
 
     @Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "movie_id")
-    private Long movieId;
+    private Integer movieId;
 
     public UserMovieId() {
     }
 
-    public UserMovieId(Long userId, Long movieId) {
+    public UserMovieId(Integer userId, Integer movieId) {
         this.userId = userId;
         this.movieId = movieId;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public Long getMovieId() {
+    public Integer getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(Long movieId) {
+    public void setMovieId(Integer movieId) {
         this.movieId = movieId;
     }
 

@@ -6,13 +6,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "Movie")
 public class Movie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movie_id")
-    private int id;
+    private Integer id;
 
     @Column(name = "movie_name")
     private String movieName;
@@ -35,7 +35,7 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(int id, String movieName, LocalDate date, String description, String posterUrl, String trailerUrl, List<Genre> genres) {
+    public Movie(Integer id, String movieName, LocalDate date, String description, String posterUrl, String trailerUrl, List<Genre> genres) {
         this.id = id;
         this.movieName = movieName;
         this.date = date;
@@ -45,11 +45,11 @@ public class Movie {
         this.genres = genres;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
