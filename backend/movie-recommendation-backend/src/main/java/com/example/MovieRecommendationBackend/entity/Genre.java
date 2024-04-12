@@ -11,7 +11,7 @@ public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "genre_id")
-    private Long genreId;
+    private Integer genreId;
 
     @Column(name = "genre_name")
     private String genreName;
@@ -27,16 +27,16 @@ public class Genre {
     public Genre() {
     }
 
-    public Genre(Long genreId, String genreName) {
+    public Genre(Integer genreId, String genreName) {
         this.genreId = genreId;
         this.genreName = genreName;
     }
 
-    public Long getGenreId() {
+    public Integer getGenreId() {
         return genreId;
     }
 
-    public void setGenreId(Long genreId) {
+    public void setGenreId(Integer genreId) {
         this.genreId = genreId;
     }
 
