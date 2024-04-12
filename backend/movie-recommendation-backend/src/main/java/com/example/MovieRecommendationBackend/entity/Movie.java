@@ -1,21 +1,23 @@
 package com.example.MovieRecommendationBackend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table
 public class Movie {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "movie_id")
     private int id;
 
     @Column(name = "movie_name")
+    private String movieName;
+
+    @Column(name = "movie_date")
     private LocalDate date;
 
     @Column(name = "movie_description")
@@ -27,15 +29,20 @@ public class Movie {
     @Column(name = "trailer_url")
     private String trailerUrl;
 
+    @ManyToMany(mappedBy = "movies")
+    private List<Genre> genres;
+
     public Movie() {
     }
 
-    public Movie(int id, LocalDate date, String description, String posterUrl, String trailerUrl) {
+    public Movie(int id, String movieName, LocalDate date, String description, String posterUrl, String trailerUrl, List<Genre> genres) {
         this.id = id;
+        this.movieName = movieName;
         this.date = date;
         this.description = description;
         this.posterUrl = posterUrl;
         this.trailerUrl = trailerUrl;
+        this.genres = genres;
     }
 
     public int getId() {
@@ -44,6 +51,14 @@ public class Movie {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getMovieName() {
+        return movieName;
+    }
+
+    public void setMovieName(String movieName) {
+        this.movieName = movieName;
     }
 
     public LocalDate getDate() {
@@ -76,5 +91,13 @@ public class Movie {
 
     public void setTrailerUrl(String trailerUrl) {
         this.trailerUrl = trailerUrl;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
     }
 }
