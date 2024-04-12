@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface UserMovieRepository extends CrudRepository<UserMovie, UserMovieId> {
 
-    List<UserMovie> findByStatus_StatusId(Integer statusId);
+    List<UserMovie> findByUserIdAndStatusId(Integer userId, Integer statusId);
 }
 

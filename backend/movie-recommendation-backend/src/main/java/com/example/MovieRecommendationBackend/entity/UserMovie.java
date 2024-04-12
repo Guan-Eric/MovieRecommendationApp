@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 
 @Entity
-@Table(name = "UserMovie")
+@Table(name = "User_Movie")
 public class UserMovie {
 
     @EmbeddedId

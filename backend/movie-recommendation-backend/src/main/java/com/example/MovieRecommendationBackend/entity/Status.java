@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 public class Status {
     @Id
     @Column(name = "status_id")
-    private Integer statusId;
+    private Integer id;
 
     @Column(name = "status_name")
     private String statusName;
@@ -18,17 +18,17 @@ public class Status {
     public Status() {
     }
 
-    public Status(Integer statusId, String statusName) {
-        this.statusId = statusId;
+    public Status(Integer id, String statusName) {
+        this.id = id;
         this.statusName = statusName;
     }
 
     public Integer getStatusId() {
-        return statusId;
+        return id;
     }
 
-    public void setStatusId(Integer statusId) {
-        this.statusId = statusId;
+    public void setStatusId(Integer id) {
+        this.id = id;
     }
 
     public String getStatusName() {

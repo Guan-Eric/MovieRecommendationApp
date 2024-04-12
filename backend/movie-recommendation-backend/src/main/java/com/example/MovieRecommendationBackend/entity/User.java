@@ -8,7 +8,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+<<<<<<< HEAD
     private Integer userId;
+=======
+    private Integer id;
+>>>>>>> jpa-queries
 
     @Column(name = "user_name")
     private String userName;
@@ -19,18 +23,31 @@ public class User {
     public User() {
     }
 
+<<<<<<< HEAD
     public User(Integer userId, String userName, String userPassword) {
         this.userId = userId;
+=======
+    public User(Integer id, String userName, String userPassword) {
+        this.id = id;
+>>>>>>> jpa-queries
         this.userName = userName;
         this.userPassword = userPassword;
     }
 
     public Integer getUserId() {
+<<<<<<< HEAD
         return userId;
     }
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+=======
+        return id;
+    }
+
+    public void setUserId(Integer id) {
+        this.id = id;
+>>>>>>> jpa-queries
     }
 
     public String getUserName() {
