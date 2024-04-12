@@ -2,16 +2,21 @@ package com.example.MovieRecommendationBackend.entity;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "UserMovie")
 public class UserMovie {
-    @Id
+
+    @EmbeddedId
+    public UserMovieId id;
+
     @ManyToOne
+    @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Id
     @ManyToOne
+    @MapsId("movieId")
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
@@ -64,3 +69,4 @@ public class UserMovie {
         this.rating = rating;
     }
 }
+
