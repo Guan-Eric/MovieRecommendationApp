@@ -1,14 +1,14 @@
-package com.example.movieRecommendor;
+package com.example.MovieRecommendationBackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MovieRecommendorApplication {
+public class MovieRecommendationApplication {
 
 	public static void main(String[] args) {
 		System.out.println("hello");
-		SpringApplication.run(MovieRecommendorApplication.class, args);
+		SpringApplication.run(MovieRecommendationApplication.class, args);
 	}
 
 }

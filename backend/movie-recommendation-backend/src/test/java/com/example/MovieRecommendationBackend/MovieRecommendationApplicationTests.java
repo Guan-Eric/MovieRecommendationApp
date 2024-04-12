@@ -1,10 +1,10 @@
-package com.example.movieRecommendor;
+package com.example.MovieRecommendationBackend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MovieRecommendorApplicationTests {
+class MovieRecommendationApplicationTests {
 
 	@Test
 	void contextLoads() {
