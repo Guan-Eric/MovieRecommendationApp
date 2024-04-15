@@ -11,7 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>movie-recommendation-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>movieRecommendor</name>
+	<name>movieRecommendationBackend</name>
 	<description>Movie Recommendation App</description>
 	<properties>
 		<java.version>17</java.version>
@@ -25,7 +25,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
