@@ -16,20 +16,24 @@ public class User {
     @Column(name = "user_password")
     private String userPassword;
 
+    @Column(name = "api_key")
+    private String apiKey;
+
     public User() {
     }
 
-    public User(Integer id, String userName, String userPassword) {
+    public User(Integer id, String userName, String userPassword, String apiKey) {
         this.id = id;
         this.userName = userName;
         this.userPassword = userPassword;
+        this.apiKey = apiKey;
     }
 
-    public Integer getUserId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setUserId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -49,5 +53,11 @@ public class User {
         this.userPassword = userPassword;
     }
 
-    // Getters and setters
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
 }

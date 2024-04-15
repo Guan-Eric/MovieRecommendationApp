@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MovieRecommendationApplication {
 
 	public static void main(String[] args) {
-		System.out.println("hello");
 		SpringApplication.run(MovieRecommendationApplication.class, args);
 	}
-
 }

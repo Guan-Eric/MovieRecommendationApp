@@ -1,8 +1,12 @@
 package com.example.MovieRecommendationBackend.controller;
 
+import com.example.MovieRecommendationBackend.entity.User;
 import com.example.MovieRecommendationBackend.entity.UserMovie;
 import com.example.MovieRecommendationBackend.service.MovieService;
+import com.example.MovieRecommendationBackend.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +17,19 @@ public class MovieController {
 
     @Autowired
     MovieService movieService;
+
+    @Autowired
+    UserService userService;
+
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUp(@RequestBody User request, HttpServletResponse response){
+        return userService.signUp(request, response);
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<String> login(@RequestBody User request, HttpServletResponse response){
+        return userService.login(request, response);
+    }
 
     @GetMapping("/movies/{userId}/{statusId}")
     public List<UserMovie> getAllByStatusId(@PathVariable("userId") int userId, @PathVariable("statusId") int statusId) {
