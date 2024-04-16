@@ -75,7 +75,7 @@ public class MovieService {
             response.add(newUserMovie);
         }
         return response;
-        throw new RuntimeException("User ID not found in cookies");
+        //throw new RuntimeException("User ID not found in cookies");
     }
 
     public UserMovie updateUserMovieStatus(HttpServletRequest request, UserMovie userMovie) {
