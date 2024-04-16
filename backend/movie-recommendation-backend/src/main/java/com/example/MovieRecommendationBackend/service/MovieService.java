@@ -50,8 +50,7 @@ public class MovieService {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("userId".equals(cookie.getName())) {
-                    int userId = Integer.parseInt(cookie.getValue());
-                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(userId, statusId);
+                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(Integer.parseInt(cookie.getValue()), statusId);
                     List<UserMovie> response = new ArrayList<>();
                     for (UserMovie userMovie : userMovies) {
                         UserMovie newUserMovie = new UserMovie();
@@ -65,6 +64,17 @@ public class MovieService {
                 }
             }
         }
+        List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(1, statusId);
+        List<UserMovie> response = new ArrayList<>();
+        for (UserMovie userMovie : userMovies) {
+            UserMovie newUserMovie = new UserMovie();
+            newUserMovie.setMovie(userMovie.getMovie());
+            newUserMovie.setRating(userMovie.getRating());
+            newUserMovie.setStatus(userMovie.getStatus());
+            newUserMovie.setId(userMovie.getId());
+            response.add(newUserMovie);
+        }
+        return response;
         throw new RuntimeException("User ID not found in cookies");
     }
 
@@ -78,7 +88,9 @@ public class MovieService {
                 }
             }
         }
-        throw new RuntimeException("User ID not found in cookies");
+        userMovie.setUser(userRepository.findById(1).get());
+        return userMovieRepository.save(userMovie);
+        //throw new RuntimeException("User ID not found in cookies");
     }
 
     public UserMovie getUserMovie(HttpServletRequest request, int movieId) {
@@ -90,7 +102,8 @@ public class MovieService {
                 }
             }
         }
-        return null;
+        return userMovieRepository.findById(new UserMovieId(1, movieId)).get();
+        //return null;
     }
 
     public ResponseEntity<String> saveUserMovie(HttpServletRequest request, UserMovie userMovie) {
@@ -114,7 +127,12 @@ public class MovieService {
                 }
             }
         }
-        return null;
+        userMovie.setUser(userRepository.findById(1).get());
+        UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), userMovie.getMovie().getId());
+        userMovie.setId(userMovieId);
+        userMovieRepository.save(userMovie);
+        return ResponseEntity.ok("Add movie successful");
+        //return null;
     }
 
     public void deleteUserMovie(HttpServletRequest request, UserMovie userMovie) {
