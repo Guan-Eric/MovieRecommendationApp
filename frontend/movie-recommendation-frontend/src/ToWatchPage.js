@@ -92,6 +92,8 @@ function ToWatchPage() {
             onClose={() => setRatingOpen(false)}
             onConfirm={confirmRating}
             movie={selectedMovie}
+            headerText="Have you seen the movie? If so, please submit a rating below."
+            paragraphText="Your rating will be used by the AI to make better recommendations in the future."
         />
     </div>
 );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './RatingModal.css';
 
-function RatingModal({ isOpen, onClose, onConfirm, movie }) {
+function RatingModal({ isOpen, onClose, onConfirm, movie, headerText, paragraphText }) {
     const [rating, setRating] = useState(0);
     
     useEffect(() => {
@@ -39,8 +39,8 @@ function RatingModal({ isOpen, onClose, onConfirm, movie }) {
     return (
         <div className="modal-backdrop">
             <div className="modal-content">
-                <h4>Have you seen the movie? If so, please submit a rating below.</h4>
-                <p>Your rating will be used by the AI to make better reccomendations in the future.</p>
+                <h4>{headerText}</h4>
+                <p>{paragraphText}</p>
                 <StarRating />
                 <div className="modal-actions">
                     <button onClick={() => onConfirm(movie, rating)} className="modal-button confirm">Confirm</button>
