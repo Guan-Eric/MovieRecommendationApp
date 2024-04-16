@@ -39,7 +39,7 @@ public class MovieController {
     }
 
     @PostMapping("/addmovie")
-    public UserMovie addUserMovie(HttpServletRequest request, @RequestBody UserMovie userMovie) {
+    public ResponseEntity<String> addUserMovie(HttpServletRequest request, @RequestBody UserMovie userMovie) {
         return movieService.saveUserMovie(request, userMovie);
     }
 
@@ -54,7 +54,7 @@ public class MovieController {
     }
 
     @DeleteMapping("/removemovie")
-    public void deleteUserMovie(HttpServletRequest request, @PathVariable("movieId") int movieId) {
-        movieService.deleteUserMovie(request, movieId);
+    public void deleteUserMovie(HttpServletRequest request, @RequestBody UserMovie userMovie) {
+        movieService.deleteUserMovie(request, userMovie);
     }
 }
