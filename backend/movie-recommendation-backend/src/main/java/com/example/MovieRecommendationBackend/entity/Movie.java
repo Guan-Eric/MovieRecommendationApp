@@ -18,7 +18,7 @@ public class Movie {
     private String movieName;
 
     @Column(name = "movie_date")
-    private LocalDate date;
+    private String date;
 
     @Column(name = "movie_description")
     private String description;
@@ -35,7 +35,7 @@ public class Movie {
     public Movie() {
     }
 
-    public Movie(Integer id, String movieName, LocalDate date, String description, String posterUrl, String trailerUrl, List<Genre> genres) {
+    public Movie(Integer id, String movieName, String date, String description, String posterUrl, String trailerUrl, List<Genre> genres) {
         this.id = id;
         this.movieName = movieName;
         this.date = date;
@@ -61,11 +61,11 @@ public class Movie {
         this.movieName = movieName;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

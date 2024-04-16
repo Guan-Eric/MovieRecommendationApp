@@ -1,14 +1,15 @@
 package com.example.MovieRecommendationBackend.service;
 
-import com.example.MovieRecommendationBackend.entity.Movie;
-import com.example.MovieRecommendationBackend.entity.Status;
-import com.example.MovieRecommendationBackend.entity.UserMovie;
-import com.example.MovieRecommendationBackend.entity.UserMovieId;
+import com.example.MovieRecommendationBackend.entity.*;
 import com.example.MovieRecommendationBackend.repository.UserMovieRepository;
+import com.example.MovieRecommendationBackend.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.MovieRecommendationBackend.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -21,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,27 +31,93 @@ public class MovieService {
     @Autowired
     UserMovieRepository userMovieRepository;
 
-    public List<UserMovie> getUserMoviesByStatusId(int userId, int statusId) {
-        return userMovieRepository.findByUserIdAndStatusId(userId, statusId);
+    @Autowired
+    MovieRepository movieRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    public List<UserMovie> getUserMoviesByStatusId(HttpServletRequest request, String status) {
+        int statusId = 0;
+        switch (status) {
+            case "towatch" -> statusId = 1;
+            case "seen" -> statusId = 2;
+            case "tonotwatch" -> statusId = 3;
+            default -> throw new IllegalArgumentException("Invalid status: " + status);
+        }
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userID".equals(cookie.getName())) {
+                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(Integer.getInteger(cookie.getValue()), statusId);
+                    List<UserMovie> response = new ArrayList<>();
+                    for (UserMovie userMovie : userMovies) {
+                        UserMovie newUserMovie = new UserMovie();
+                        newUserMovie.setMovie(userMovie.getMovie());
+                        newUserMovie.setRating(userMovie.getRating());
+                        response.add(newUserMovie);
+                    }
+                    return response;
+                }
+            }
+        }
+        return null;
     }
 
-    public UserMovie updateUserMovieStatus(UserMovie userMovie, int id) {
-        Status status = new Status();
-        status.setStatusId(id);
-        userMovie.setStatus(status);
-        return userMovieRepository.save(userMovie);
+    public UserMovie updateUserMovieStatus(HttpServletRequest request, UserMovie userMovie) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userID".equals(cookie.getName())) {
+                    userMovie.setUser(userRepository.findById(Integer.getInteger(cookie.getName())).get());
+                    return userMovieRepository.save(userMovie);
+                }
+            }
+        }
+        return null;
     }
 
-    public UserMovie getUserMovie(int userId, int movieId) {
-        return userMovieRepository.findById(new UserMovieId(userId, movieId)).get();
+    public UserMovie getUserMovie(HttpServletRequest request, int movieId) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userID".equals(cookie.getName())) {
+                    return userMovieRepository.findById(new UserMovieId(Integer.getInteger(cookie.getName()), movieId)).get();
+                }
+            }
+        }
+        return null;
     }
 
-    public UserMovie saveUserMovie(UserMovie userMovie) {
-        return userMovieRepository.save(userMovie);
+    public UserMovie saveUserMovie(HttpServletRequest request, UserMovie userMovie) {
+        Movie movie = new Movie();
+        if (movieRepository.existsByMovieNameAndDate(userMovie.getMovie().getMovieName(), userMovie.getMovie().getDate())) {
+            movie = movieRepository.findByMovieNameAndDate(userMovie.getMovie().getMovieName(), userMovie.getMovie().getDate());
+        }
+        else {
+            movieRepository.save(userMovie.getMovie());
+        }
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userID".equals(cookie.getName())) {
+                    userMovie.setUser(userRepository.findById(Integer.getInteger(cookie.getName())).get());
+                    return userMovieRepository.save(userMovie);
+                }
+            }
+        }
+        return null;
     }
 
-    public void deleteUserMovie(int userId, int movieId) {
-        userMovieRepository.deleteById(new UserMovieId(userId, movieId));
+    public void deleteUserMovie(HttpServletRequest request, int movieId) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userID".equals(cookie.getName())) {
+                    userMovieRepository.deleteById(new UserMovieId(Integer.getInteger(cookie.getName()), movieId));
+                }
+            }
+        }
     }
 
     public JsonObject callOpenAI(List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {

@@ -1,9 +1,12 @@
 package com.example.MovieRecommendationBackend.controller;
 
+import com.example.MovieRecommendationBackend.entity.Movie;
 import com.example.MovieRecommendationBackend.entity.User;
 import com.example.MovieRecommendationBackend.entity.UserMovie;
 import com.example.MovieRecommendationBackend.service.MovieService;
 import com.example.MovieRecommendationBackend.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/movie")
 public class MovieController {
 
     @Autowired
@@ -31,28 +33,28 @@ public class MovieController {
         return userService.login(request, response);
     }
 
-    @GetMapping("/movies/{userId}/{statusId}")
-    public List<UserMovie> getAllByStatusId(@PathVariable("userId") int userId, @PathVariable("statusId") int statusId) {
-        return movieService.getUserMoviesByStatusId(userId, statusId);
+    @GetMapping("/{status}")
+    public List<UserMovie> getAllByStatusId(HttpServletRequest request, @PathVariable("status") String status) {
+        return movieService.getUserMoviesByStatusId(request, status);
     }
 
-    @PostMapping("/add")
-    public UserMovie addUserMovie(@RequestBody UserMovie userMovie) {
-        return movieService.saveUserMovie(userMovie);
+    @PostMapping("/addmovie")
+    public UserMovie addUserMovie(HttpServletRequest request, @RequestBody UserMovie userMovie) {
+        return movieService.saveUserMovie(request, userMovie);
     }
 
-    @GetMapping("/get/{userId}/{movieId}")
-    public UserMovie getUserMovie(@PathVariable("userId") int userId, @PathVariable("movieId") int movieId) {
-        return movieService.getUserMovie(userId, movieId);
+    @GetMapping("/movie/{movieId}")
+    public UserMovie getUserMovie(HttpServletRequest request, @PathVariable("movieId") int movieId) {
+        return movieService.getUserMovie(request, movieId);
     }
 
-    @PutMapping("/status/{id}")
-    public UserMovie updateUserMovieStatus(@RequestBody UserMovie userMovie, @PathVariable("id") int id) {
-        return movieService.updateUserMovieStatus(userMovie, id);
+    @PutMapping("/editmovie")
+    public UserMovie updateUserMovieStatus(HttpServletRequest request, @RequestBody UserMovie userMovie) {
+        return movieService.updateUserMovieStatus(request, userMovie);
     }
 
-    @DeleteMapping("/delete/{userId}/{movieId}")
-    public void deleteUserMovie(@PathVariable("userId") int userId, @PathVariable("movieId") int movieId) {
-        movieService.deleteUserMovie(userId, movieId);
+    @DeleteMapping("/removemovie")
+    public void deleteUserMovie(HttpServletRequest request, @PathVariable("movieId") int movieId) {
+        movieService.deleteUserMovie(request, movieId);
     }
 }

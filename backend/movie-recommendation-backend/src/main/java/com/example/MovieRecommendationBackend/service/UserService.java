@@ -24,9 +24,9 @@ public class UserService {
 
             User newUser = userRepository.save(request);
 
-            String hashedUserId = hashUserId(Integer.toUnsignedLong(newUser.getId()));
+            //String hashedUserId = hashUserId(Integer.toUnsignedLong(newUser.getId()));
 
-            Cookie cookie = new Cookie("userId", hashedUserId);
+            Cookie cookie = new Cookie("userId", newUser.getId().toString());
             cookie.setMaxAge(60 * 60 * 24); // 1 day expiration time
             cookie.setPath("/"); // Set cookie path to root
             response.addCookie(cookie);
@@ -40,8 +40,8 @@ public class UserService {
         User user = userRepository.findByUserName(request.getUserName());
 
         if (user.getUserPassword().equals(hashPassword(request.getUserPassword()))) {
-            String hashedUserId = hashUserId(Integer.toUnsignedLong(user.getId()));
-            Cookie cookie = new Cookie("userId", hashedUserId);
+            //String hashedUserId = hashUserId(Integer.toUnsignedLong(user.getId()));
+            Cookie cookie = new Cookie("userId", user.getId().toString());
             cookie.setMaxAge(60 * 60 * 24); // 1 day expiration time
             cookie.setPath("/");
             response.addCookie(cookie);
