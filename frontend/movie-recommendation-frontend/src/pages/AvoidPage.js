@@ -10,7 +10,9 @@ function AvoidPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:8080/tonotwatch')
+        fetch('http://localhost:8080/tonotwatch',{
+            credentials: 'include'
+        })
             .then(response => response.json())
             .then(data => setMovies(data.map(item => ({
                 id: item.movie.id,

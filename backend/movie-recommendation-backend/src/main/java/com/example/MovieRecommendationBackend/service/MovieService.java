@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -39,43 +40,23 @@ public class MovieService {
     UserRepository userRepository;
 
     public List<UserMovie> getUserMoviesByStatusId(HttpServletRequest request, String status) {
-        int statusId = 0;
-        switch (status) {
-            case "towatch" -> statusId = 1;
-            case "seen" -> statusId = 2;
-            case "tonotwatch" -> statusId = 3;
+        int statusId = switch (status) {
+            case "towatch" -> 1;
+            case "seen" -> 2;
+            case "tonotwatch" -> 3;
             default -> throw new IllegalArgumentException("Invalid status: " + status);
-        }
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("userId".equals(cookie.getName())) {
-                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(Integer.parseInt(cookie.getValue()), statusId);
-                    List<UserMovie> response = new ArrayList<>();
-                    for (UserMovie userMovie : userMovies) {
-                        UserMovie newUserMovie = new UserMovie();
-                        newUserMovie.setMovie(userMovie.getMovie());
-                        newUserMovie.setRating(userMovie.getRating());
-                        newUserMovie.setStatus(userMovie.getStatus());
-                        newUserMovie.setId(userMovie.getId());
-                        response.add(newUserMovie);
-                    }
-                    return response;
-                }
-            }
-        }
-        List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(1, statusId);
-        List<UserMovie> response = new ArrayList<>();
-        for (UserMovie userMovie : userMovies) {
-            UserMovie newUserMovie = new UserMovie();
-            newUserMovie.setMovie(userMovie.getMovie());
-            newUserMovie.setRating(userMovie.getRating());
-            newUserMovie.setStatus(userMovie.getStatus());
-            newUserMovie.setId(userMovie.getId());
-            response.add(newUserMovie);
-        }
-        return response;
-        //throw new RuntimeException("User ID not found in cookies");
+        };
+
+        System.out.println(Arrays.toString(request.getCookies()));
+
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> "userId".equals(cookie.getName()))
+                .findFirst()
+                .map(cookie -> userMovieRepository.findByUserIdAndStatusId(Integer.parseInt(cookie.getValue()), statusId))
+                .orElseGet(() -> {
+                    System.out.println("No userId cookie found");
+                    return new ArrayList<>();
+                });
     }
 
     public UserMovie updateUserMovieStatus(HttpServletRequest request, UserMovie userMovie) {
