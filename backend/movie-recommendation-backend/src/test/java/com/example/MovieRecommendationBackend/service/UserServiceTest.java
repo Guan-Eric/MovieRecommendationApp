@@ -24,11 +24,6 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void testSignUp_Success() {
         User newUser = new User();
