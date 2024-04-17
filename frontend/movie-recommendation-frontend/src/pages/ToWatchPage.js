@@ -58,51 +58,47 @@ function ToWatchPage() {
     };
 
     return (
-        <div className="to-watch-container">
-            <div className="to-watch-header">
-                <button onClick={() => navigate('/recommendations')} className="nav-button nav-button-active">To Watch
-                </button>
-                <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
-                <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
-            </div>
-            <div className="logout-container">
-                <button onClick={logout} className="logout-button">Logout</button>
-            </div>
-            <div className="movie-list">
-                {hardcodedMovies.map(movie => (
-                    <div key={movie.id} className="movie-card">
-                        <div className="movie-info">
-                            <h3>{movie.title}</h3>
-                            <p>{movie.description}</p>
-                        </div>
-                        <div className="movie-actions">
-                            <button className="button green-button" onClick={() => handleRating(movie)}>✔️</button>
-                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <div className="fixed-bottom-container">
-                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations
-                </button>
-            </div>
-            {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)}
-                                             onGenerate={goToRecommendations}/>}
-            <ConfirmModal
-                isOpen={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
-                onConfirm={confirmRemoval}
-            >
-                Are you sure you want to remove this movie?
-            </ConfirmModal>
-            <RatingModal
-                isOpen={ratingOpen}
-                onClose={() => setRatingOpen(false)}
-                onConfirm={confirmRating}
-                movie={selectedMovie}
-            />
+    <div className="to-watch-container">
+        <div className="to-watch-header">
+          <button onClick={() => navigate('/recommendations')} className="nav-button nav-button-active">To Watch</button>
+          <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
+          <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
         </div>
-    );
+        <div className="movie-list">
+            {hardcodedMovies.map(movie => (
+                <div key={movie.id} className="movie-card">
+                    <div className="movie-info">
+                        <h3>{movie.title}</h3>
+                        <p>{movie.description}</p>
+                    </div>
+                    <div className="movie-actions">
+                        <button className="button green-button" onClick={() => handleRating(movie)}>✔️</button>
+                        <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
+                    </div>
+                </div>
+            ))}
+        </div>
+        <div className="fixed-bottom-container">
+            <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations</button>
+        </div>
+        {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)} onGenerate={goToRecommendations} />}
+        <ConfirmModal
+            isOpen={confirmOpen}
+            onClose={() => setConfirmOpen(false)}
+            onConfirm={confirmRemoval}
+        >
+            Are you sure you want to remove this movie?
+        </ConfirmModal>
+        <RatingModal
+            isOpen={ratingOpen}
+            onClose={() => setRatingOpen(false)}
+            onConfirm={confirmRating}
+            movie={selectedMovie}
+            headerText="Have you seen the movie? If so, please submit a rating below."
+            paragraphText="Your rating will be used by the AI to make better recommendations in the future."
+        />
+    </div>
+);
 
 }
 

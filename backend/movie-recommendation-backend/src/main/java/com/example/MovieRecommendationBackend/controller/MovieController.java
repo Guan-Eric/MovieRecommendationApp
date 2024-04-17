@@ -68,5 +68,6 @@ public class MovieController {
     @GetMapping("/checkUserAuthentication")
     public ResponseEntity<?> checkUserAuthentication(HttpServletRequest request){
         return userService.checkUserAuthentication(request);
+
     }
 }
