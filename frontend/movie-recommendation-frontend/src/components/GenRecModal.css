@@ -14,20 +14,28 @@
 .modal-content {
   background-color: #fff;
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+  position: relative;
 }
 
 .modal-header {
-  font-size: 20px;
+  font-size: 24px;
   margin-bottom: 20px;
   color: #333;
   text-align: center;
+  font-weight: 600;
 }
 
 .modal-body {
-  margin-bottom: 20px; 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  row-gap: 10px;
+  font-size: 16px;
 }
 
 .modal-actions {
@@ -35,25 +43,33 @@
   margin-top: 20px;
 }
 
-.modal-button {
-  padding: 8px 16px;
-  margin: 0 10px;
+.modal-button, .modal-option-item {
+  padding: 10px 20px;
+  margin: 5px 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+  text-align: center;
+  height: 50px; /* Ensures enough space for two lines of text */
+}
+
+.modal-button:hover, .modal-option-item:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 .modal-close-btn {
   background-color: transparent;
-  color: #333;
+  color: #666;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 28px;
   border: none;
   outline: none;
   position: absolute;
-  top: 10px;
-  right: 20px;
+  top: -15px;
+  right: -15px;
 }
 
 .confirm {
@@ -64,5 +80,68 @@
 .cancel {
   background-color: #dc3545;
   color: white;
+}
+
+.label-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns the button below the label */
+}
+
+.option-button {
+  width: 100%; /* Full width to match the label's width */
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.option-button:hover {
+  background-color: #e0e0e0;
+}
+
+
+.options-modal-content {
+  position: absolute;
+  background-color: #fff;
+  padding: 20px;
+  padding-top: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1002;
+  width: 70%; /* Suitable width to accommodate two columns */
+  max-height: 70%;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
+  gap: 10px; /* Spacing between buttons */
+  align-items: start; /* Align items at the start of their container */
+  justify-items: center; /* Horizontally center items within their cells */
+}
+
+
+
+
+.modal-option-item {
+  display: flex; /* Using flexbox to align text vertically */
+  align-items: center; /* Centers text vertically within the button */
+  justify-content: center; /* Centers text horizontally */
+  padding: 10px;
+  height: 50px; /* Fixed height for consistent button sizes */
+  border: none;
+  border-radius: 8px;
+  background-color: black;
+  cursor: pointer;
+  width: 100%; /* Full width to fill the column */
+  text-align: center; /* Ensures text is centered, redundant with flex but added for clarity */
+  font-size: 14px; /* Reduced font size for aesthetic fitting */
+  white-space: normal; /* Allows text wrapping if needed */
+  line-height: normal; /* Default line height to be managed by flex alignment */
+  overflow: hidden; /* Clips text that overflows the button boundaries */
+}
+
+.modal-option-item:hover {
+  background-color: #e0e0e0;
 }
 

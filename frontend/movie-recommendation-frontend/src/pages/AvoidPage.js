@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../components/ConfirmModal';
+import GenRecModal from '../components/GenRecModal';
 import './ToWatchPage.css';
 
 function AvoidPage() {
     const [movies, setMovies] = useState([]);
+    const [genRecModalOpen, setGenRecModalOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
@@ -27,6 +29,16 @@ function AvoidPage() {
             .catch(error => console.error('Error fetching movies:', error));
     }, []);
 
+    const handleGenerateRecommendations = () => {
+        console.log('Opening Generate Recommendations Modal');
+        setGenRecModalOpen(true);
+    };
+
+    const goToRecommendations = () => {
+        console.log('Navigating to Recommendations Page');
+        navigate('/recommendations');
+    };
+
     const handleRemoveMovie = (movie) => {
         console.log('Preparing to remove:', movie.title);
         setSelectedMovie(movie);
@@ -42,16 +54,16 @@ function AvoidPage() {
     return (
         <div className="to-watch-container">
             <div className="to-watch-header">
-                <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
-                <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
-                <button onClick={() => navigate('/avoid')} className="nav-button nav-button-active">To Avoid</button>
+              <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
+              <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
+              <button onClick={() => navigate('/avoid')} className="nav-button nav-button-active">To Avoid</button>
             </div>
             <div className="movie-list">
                 {movies.map(movie => (
                     <div key={movie.id} className="movie-card">
                         <div className="movie-info">
-                            <h3>{movie.title}</h3>
-                            <p>{movie.description}</p>
+                            <h3>{movie.title} ({movie.year})</h3>
+                            <p>{movie.description}</p>  
                         </div>
                         <div className="movie-actions">
                             <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
@@ -59,6 +71,10 @@ function AvoidPage() {
                     </div>
                 ))}
             </div>
+            <div className="fixed-bottom-container">
+                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations</button>
+            </div>
+            {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)} onGenerate={goToRecommendations} />}
             <ConfirmModal
                 isOpen={confirmOpen}
                 onClose={() => setConfirmOpen(false)}
