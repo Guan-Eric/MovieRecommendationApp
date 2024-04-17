@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import GenRecModal from './GenRecModal';
-import ConfirmModal from './ConfirmModal';
-import RatingModal from './RatingModal';
+import GenRecModal from '../components/GenRecModal';
+import ConfirmModal from '../components/ConfirmModal';
+import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
+import { useAuth } from '../context/AuthContext';
 
 const hardcodedMovies = [
   { id: 1, title: 'Inception', description: 'A thief who steals corporate secrets through the use of dream-sharing technology.' },
@@ -20,6 +21,7 @@ function ToWatchPage() {
     const [ratingOpen, setRatingOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
+    const {logout} = useAuth();
 
     const handleGenerateRecommendations = () => {
         console.log('Opening Generate Recommendations Modal');
@@ -56,45 +58,51 @@ function ToWatchPage() {
     };
 
     return (
-    <div className="to-watch-container">
-        <div className="to-watch-header">
-          <button onClick={() => navigate('/recommendations')} className="nav-button nav-button-active">To Watch</button>
-          <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
-          <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
-        </div>
-        <div className="movie-list">
-            {hardcodedMovies.map(movie => (
-                <div key={movie.id} className="movie-card">
-                    <div className="movie-info">
-                        <h3>{movie.title}</h3>
-                        <p>{movie.description}</p>
+        <div className="to-watch-container">
+            <div className="to-watch-header">
+                <button onClick={() => navigate('/recommendations')} className="nav-button nav-button-active">To Watch
+                </button>
+                <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
+                <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
+            </div>
+            <div className="logout-container">
+                <button onClick={logout} className="logout-button">Logout</button>
+            </div>
+            <div className="movie-list">
+                {hardcodedMovies.map(movie => (
+                    <div key={movie.id} className="movie-card">
+                        <div className="movie-info">
+                            <h3>{movie.title}</h3>
+                            <p>{movie.description}</p>
+                        </div>
+                        <div className="movie-actions">
+                            <button className="button green-button" onClick={() => handleRating(movie)}>✔️</button>
+                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
+                        </div>
                     </div>
-                    <div className="movie-actions">
-                        <button className="button green-button" onClick={() => handleRating(movie)}>✔️</button>
-                        <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
-                    </div>
-                </div>
-            ))}
+                ))}
+            </div>
+            <div className="fixed-bottom-container">
+                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations
+                </button>
+            </div>
+            {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)}
+                                             onGenerate={goToRecommendations}/>}
+            <ConfirmModal
+                isOpen={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={confirmRemoval}
+            >
+                Are you sure you want to remove this movie?
+            </ConfirmModal>
+            <RatingModal
+                isOpen={ratingOpen}
+                onClose={() => setRatingOpen(false)}
+                onConfirm={confirmRating}
+                movie={selectedMovie}
+            />
         </div>
-        <div className="fixed-bottom-container">
-            <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations</button>
-        </div>
-        {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)} onGenerate={goToRecommendations} />}
-        <ConfirmModal
-            isOpen={confirmOpen}
-            onClose={() => setConfirmOpen(false)}
-            onConfirm={confirmRemoval}
-        >
-            Are you sure you want to remove this movie? 
-        </ConfirmModal>
-        <RatingModal
-            isOpen={ratingOpen}
-            onClose={() => setRatingOpen(false)}
-            onConfirm={confirmRating}
-            movie={selectedMovie}
-        />
-    </div>
-);
+    );
 
 }
 

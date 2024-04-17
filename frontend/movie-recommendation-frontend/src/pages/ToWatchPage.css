@@ -3,7 +3,7 @@
   flex-direction: column;
   height: 100vh;  
   width: 100%;
-  overflow: hidden; 
+  overflow: hidden;
   position: relative;
 }
 
@@ -128,4 +128,25 @@
     background-color: #d0d0d0; 
     color: #000;
 }
+
+.logout-container {
+    text-align: center;
+    margin-top: 50px; /* Adjust space between nav buttons and logout button */
+}
+
+.logout-button {
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    color: #fff;
+    background-color: #f44336; /* Red background for logout */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c33d2b; /* Darker red on hover */
+}
+
 

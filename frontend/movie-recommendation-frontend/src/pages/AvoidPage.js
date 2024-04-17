@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ConfirmModal from './ConfirmModal';
+import ConfirmModal from '../components/ConfirmModal';
 import './ToWatchPage.css';
 
 const initialMovies = [
-  { id: 1, title: 'Inception' },
   { id: 2, title: 'Interstellar' },
   { id: 3, title: 'The Dark Knight' },
   { id: 4, title: 'The Matrix' },
-  { id: 5, title: 'Avatar' },
   { id: 6, title: 'Titanic' },
 ];
 
-function SeenPage() {
+function AvoidPage() {
     const [movies, setMovies] = useState(initialMovies);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
@@ -34,8 +32,8 @@ function SeenPage() {
         <div className="to-watch-container">
             <div className="to-watch-header">
               <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
-              <button onClick={() => navigate('/seen')} className="nav-button nav-button-active">Seen</button>
-              <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
+              <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
+              <button onClick={() => navigate('/avoid')} className="nav-button nav-button-active">To Avoid</button>
             </div>
             <div className="movie-list">
                 {movies.map(movie => (
@@ -60,5 +58,5 @@ function SeenPage() {
     );
 }
 
-export default SeenPage;
+export default AvoidPage;
 
