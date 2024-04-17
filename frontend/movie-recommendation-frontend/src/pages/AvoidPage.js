@@ -19,6 +19,7 @@ function AvoidPage() {
             .then(data => setMovies(data.map(item => ({
                 id: item.movie.id,
                 title: item.movie.movieName,
+                year: item.movie.date.split('-')[0], // Extracting just the year from the date
                 description: item.movie.description,
                 posterUrl: item.movie.posterUrl,
                 trailerUrl: item.movie.trailerUrl,

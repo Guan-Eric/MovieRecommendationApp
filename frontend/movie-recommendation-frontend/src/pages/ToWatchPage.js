@@ -14,6 +14,7 @@ function ToWatchPage() {
     const [ratingOpen, setRatingOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
+    const {logout} = useAuth();
 
     useEffect(() => {
         fetch('http://localhost:8080/towatch', {credentials: 'include'})
@@ -89,9 +90,12 @@ function ToWatchPage() {
     return (
         <div className="to-watch-container">
             <div className="to-watch-header">
-              <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-active">To Watch</button>
-              <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
-              <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
+                <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-active">To Watch</button>
+                <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
+                <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
+            </div>
+            <div className="logout-container">
+                <button onClick={logout} className="logout-button">Logout</button>
             </div>
             <div className="movie-list">
                 {movies.map(movie => (
@@ -108,9 +112,11 @@ function ToWatchPage() {
                 ))}
             </div>
             <div className="fixed-bottom-container">
-                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations</button>
+                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations
+                </button>
             </div>
-            {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)} onGenerate={goToRecommendations} />}
+            {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)}
+                                             onGenerate={goToRecommendations}/>}
             <ConfirmModal
                 isOpen={confirmOpen}
                 onClose={() => setConfirmOpen(false)}

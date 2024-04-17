@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class MovieController {
 
@@ -26,12 +27,12 @@ public class MovieController {
     UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody User request, HttpServletResponse response){
+    public ResponseEntity<?> signUp(@RequestBody User request, HttpServletResponse response){
         return userService.signUp(request, response);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User request, HttpServletResponse response){
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User request, HttpServletResponse response){
         return userService.login(request, response);
     }
 
@@ -53,6 +54,16 @@ public class MovieController {
     @DeleteMapping("/removemovie")
     public void deleteUserMovie(HttpServletRequest request, @RequestBody MovieInput movieInput) {
         movieService.deleteUserMovie(request, movieInput);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
+        return userService.logout(request, response);
+    }
+
+    @GetMapping("/checkUserAuthentication")
+    public ResponseEntity<?> checkUserAuthentication(HttpServletRequest request) {
+        return userService.checkUserAuthentication(request);
     }
 
     @PostMapping("/generate")

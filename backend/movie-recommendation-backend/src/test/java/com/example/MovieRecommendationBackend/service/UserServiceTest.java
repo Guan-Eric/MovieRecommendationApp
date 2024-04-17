@@ -35,7 +35,7 @@ class UserServiceTest {
         when(userRepository.save(newUser)).thenReturn(newUser);
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ResponseEntity<String> responseEntity = userService.signUp(newUser, response);
+        ResponseEntity<?> responseEntity = userService.signUp(newUser, response);
 
         assertEquals(ResponseEntity.ok("User registered successfully"), responseEntity);
 
@@ -53,7 +53,7 @@ class UserServiceTest {
         when(userRepository.existsByUserName("existingUser")).thenReturn(true);
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ResponseEntity<String> responseEntity = userService.signUp(existingUser, response);
+        ResponseEntity<?> responseEntity = userService.signUp(existingUser, response);
 
         assertEquals(ResponseEntity.badRequest().body("Username is already taken"), responseEntity);
 
@@ -75,7 +75,7 @@ class UserServiceTest {
         loginRequest.setUserPassword("testPassword");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ResponseEntity<String> responseEntity = userService.login(loginRequest, response);
+        ResponseEntity<?> responseEntity = userService.login(loginRequest, response);
 
         assertEquals(ResponseEntity.ok("Login successful"), responseEntity);
 
@@ -91,7 +91,7 @@ class UserServiceTest {
         loginRequest.setUserPassword("testPassword");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
-        ResponseEntity<String> responseEntity = userService.login(loginRequest, response);
+        ResponseEntity<?> responseEntity = userService.login(loginRequest, response);
 
         assertEquals(ResponseEntity.badRequest().body("Invalid username or password"), responseEntity);
 
