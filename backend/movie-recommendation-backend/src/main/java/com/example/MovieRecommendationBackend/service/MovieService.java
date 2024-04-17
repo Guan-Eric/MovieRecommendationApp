@@ -7,6 +7,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.MovieRecommendationBackend.repository.MovieRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,73 +49,98 @@ public class MovieService {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("userID".equals(cookie.getName())) {
-                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(Integer.getInteger(cookie.getValue()), statusId);
+                if ("userId".equals(cookie.getName())) {
+                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(Integer.parseInt(cookie.getValue()), statusId);
                     List<UserMovie> response = new ArrayList<>();
                     for (UserMovie userMovie : userMovies) {
                         UserMovie newUserMovie = new UserMovie();
                         newUserMovie.setMovie(userMovie.getMovie());
                         newUserMovie.setRating(userMovie.getRating());
+                        newUserMovie.setStatus(userMovie.getStatus());
+                        newUserMovie.setId(userMovie.getId());
                         response.add(newUserMovie);
                     }
                     return response;
                 }
             }
         }
-        return null;
+        List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(1, statusId);
+        List<UserMovie> response = new ArrayList<>();
+        for (UserMovie userMovie : userMovies) {
+            UserMovie newUserMovie = new UserMovie();
+            newUserMovie.setMovie(userMovie.getMovie());
+            newUserMovie.setRating(userMovie.getRating());
+            newUserMovie.setStatus(userMovie.getStatus());
+            newUserMovie.setId(userMovie.getId());
+            response.add(newUserMovie);
+        }
+        return response;
+        //throw new RuntimeException("User ID not found in cookies");
     }
 
     public UserMovie updateUserMovieStatus(HttpServletRequest request, UserMovie userMovie) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("userID".equals(cookie.getName())) {
-                    userMovie.setUser(userRepository.findById(Integer.getInteger(cookie.getName())).get());
+                if ("userId".equals(cookie.getName())) {
+                    userMovie.setUser(userRepository.findById(Integer.valueOf(cookie.getValue())).get());
                     return userMovieRepository.save(userMovie);
                 }
             }
         }
-        return null;
+        userMovie.setUser(userRepository.findById(1).get());
+        return userMovieRepository.save(userMovie);
+        //throw new RuntimeException("User ID not found in cookies");
     }
 
     public UserMovie getUserMovie(HttpServletRequest request, int movieId) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("userID".equals(cookie.getName())) {
-                    return userMovieRepository.findById(new UserMovieId(Integer.getInteger(cookie.getName()), movieId)).get();
+                if ("userId".equals(cookie.getName())) {
+                    return userMovieRepository.findById(new UserMovieId(Integer.valueOf(cookie.getValue()), movieId)).get();
                 }
             }
         }
-        return null;
+        return userMovieRepository.findById(new UserMovieId(1, movieId)).get();
+        //return null;
     }
 
-    public UserMovie saveUserMovie(HttpServletRequest request, UserMovie userMovie) {
+    public ResponseEntity<String> saveUserMovie(HttpServletRequest request, UserMovie userMovie) {
         Movie movie = new Movie();
         if (movieRepository.existsByMovieNameAndDate(userMovie.getMovie().getMovieName(), userMovie.getMovie().getDate())) {
             movie = movieRepository.findByMovieNameAndDate(userMovie.getMovie().getMovieName(), userMovie.getMovie().getDate());
+            userMovie.setMovie(movie);
         }
         else {
-            movieRepository.save(userMovie.getMovie());
+            userMovie.setMovie(movieRepository.save(userMovie.getMovie()));
         }
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("userID".equals(cookie.getName())) {
-                    userMovie.setUser(userRepository.findById(Integer.getInteger(cookie.getName())).get());
-                    return userMovieRepository.save(userMovie);
+                if ("userId".equals(cookie.getName())) {
+                    userMovie.setUser(userRepository.findById(Integer.valueOf(cookie.getValue())).get());
+                    UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), userMovie.getMovie().getId());
+                    userMovie.setId(userMovieId);
+                    userMovieRepository.save(userMovie);
+                    return ResponseEntity.ok("Add movie successful");
                 }
             }
         }
-        return null;
+        userMovie.setUser(userRepository.findById(1).get());
+        UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), userMovie.getMovie().getId());
+        userMovie.setId(userMovieId);
+        userMovieRepository.save(userMovie);
+        return ResponseEntity.ok("Add movie successful");
+        //return null;
     }
 
-    public void deleteUserMovie(HttpServletRequest request, int movieId) {
+    public void deleteUserMovie(HttpServletRequest request, UserMovie userMovie) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if ("userID".equals(cookie.getName())) {
-                    userMovieRepository.deleteById(new UserMovieId(Integer.getInteger(cookie.getName()), movieId));
+                if ("userId".equals(cookie.getName())) {
+                    userMovieRepository.deleteById(userMovie.getId());
                 }
             }
         }

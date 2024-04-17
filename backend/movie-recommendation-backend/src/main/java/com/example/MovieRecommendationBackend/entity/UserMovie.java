@@ -37,6 +37,14 @@ public class UserMovie {
         this.rating = rating;
     }
 
+    public UserMovieId getId() {
+        return id;
+    }
+
+    public void setId(UserMovieId id) {
+        this.id = id;
+    }
+
     public User getUser() {
         return user;
     }
