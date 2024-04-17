@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ConfirmModal from './ConfirmModal';
-import RatingModal from './RatingModal'; 
+import ConfirmModal from '../components/ConfirmModal';
+import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
-import './RatingModal.css';
+
 
 const initialMovies = [
   { id: 1, title: 'Inception', rating: 3 },
