@@ -9,11 +9,13 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class MovieController {
 
@@ -24,12 +26,12 @@ public class MovieController {
     UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody User request, HttpServletResponse response){
+    public ResponseEntity<?> signUp(@RequestBody User request, HttpServletResponse response){
         return userService.signUp(request, response);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User request, HttpServletResponse response){
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User request, HttpServletResponse response){
         return userService.login(request, response);
     }
 
@@ -56,5 +58,16 @@ public class MovieController {
     @DeleteMapping("/removemovie")
     public void deleteUserMovie(HttpServletRequest request, @RequestBody UserMovie userMovie) {
         movieService.deleteUserMovie(request, userMovie);
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
+        return userService.logout(request, response);
+    }
+
+    @GetMapping("/checkUserAuthentication")
+    public ResponseEntity<?> checkUserAuthentication(HttpServletRequest request){
+        return userService.checkUserAuthentication(request);
+
     }
 }

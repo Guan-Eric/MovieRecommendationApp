@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import GenRecModal from './GenRecModal';
-import ConfirmModal from './ConfirmModal';
-import RatingModal from './RatingModal';
+import GenRecModal from '../components/GenRecModal';
+import ConfirmModal from '../components/ConfirmModal';
+import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
+import { useAuth } from '../context/AuthContext';
 
 const hardcodedMovies = [
   { id: 1, title: 'Inception', description: 'A thief who steals corporate secrets through the use of dream-sharing technology.' },
@@ -20,6 +21,7 @@ function ToWatchPage() {
     const [ratingOpen, setRatingOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
+    const {logout} = useAuth();
 
     const handleGenerateRecommendations = () => {
         console.log('Opening Generate Recommendations Modal');
@@ -85,7 +87,7 @@ function ToWatchPage() {
             onClose={() => setConfirmOpen(false)}
             onConfirm={confirmRemoval}
         >
-            Are you sure you want to remove this movie? 
+            Are you sure you want to remove this movie?
         </ConfirmModal>
         <RatingModal
             isOpen={ratingOpen}
