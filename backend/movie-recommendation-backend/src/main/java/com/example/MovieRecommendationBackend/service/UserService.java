@@ -39,7 +39,7 @@ public class UserService {
     public ResponseEntity<String> login(User request, HttpServletResponse response) {
         User user = userRepository.findByUserName(request.getUserName());
 
-        if (user.getUserPassword().equals(hashPassword(request.getUserPassword()))) {
+        if (user != null && user.getUserPassword().equals(hashPassword(request.getUserPassword()))) {
             //String hashedUserId = hashUserId(Integer.toUnsignedLong(user.getId()));
             Cookie cookie = new Cookie("userId", user.getId().toString());
             cookie.setMaxAge(60 * 60 * 24); // 1 day expiration time
