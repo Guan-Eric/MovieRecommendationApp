@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -23,8 +22,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -40,92 +37,157 @@ public class MovieService {
     UserRepository userRepository;
 
     public List<UserMovie> getUserMoviesByStatusId(HttpServletRequest request, String status) {
-        int statusId = switch (status) {
-            case "towatch" -> 1;
-            case "seen" -> 2;
-            case "tonotwatch" -> 3;
+        int statusId = 0;
+        switch (status) {
+            case "towatch" -> statusId = 1;
+            case "seen" -> statusId = 2;
+            case "tonotwatch" -> statusId = 3;
             default -> throw new IllegalArgumentException("Invalid status: " + status);
-        };
-
-        System.out.println(Arrays.toString(request.getCookies()));
-
-        return Arrays.stream(request.getCookies())
-                .filter(cookie -> "userId".equals(cookie.getName()))
-                .findFirst()
-                .map(cookie -> userMovieRepository.findByUserIdAndStatusId(Integer.parseInt(cookie.getValue()), statusId))
-                .orElseGet(() -> {
-                    System.out.println("No userId cookie found");
-                    return new ArrayList<>();
-                });
-    }
-
-    public UserMovie updateUserMovieStatus(HttpServletRequest request, UserMovie userMovie) {
+        }
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("userId".equals(cookie.getName())) {
-                    userMovie.setUser(userRepository.findById(Integer.valueOf(cookie.getValue())).get());
-                    return userMovieRepository.save(userMovie);
+                    List<UserMovie> userMovies = userMovieRepository.findByUserIdAndStatusId(Integer.parseInt(cookie.getValue()), statusId);
+                    List<UserMovie> response = new ArrayList<>();
+                    for (UserMovie userMovie : userMovies) {
+                        UserMovie newUserMovie = new UserMovie();
+                        newUserMovie.setMovie(userMovie.getMovie());
+                        newUserMovie.setRating(userMovie.getRating());
+                        newUserMovie.setStatus(userMovie.getStatus());
+                        newUserMovie.setId(userMovie.getId());
+                        response.add(newUserMovie);
+                    }
+                    return response;
                 }
             }
         }
-        userMovie.setUser(userRepository.findById(1).get());
-        return userMovieRepository.save(userMovie);
-        //throw new RuntimeException("User ID not found in cookies");
+        throw new RuntimeException("User ID not found in cookies");
     }
 
-    public UserMovie getUserMovie(HttpServletRequest request, int movieId) {
+    public ResponseEntity<String> updateUserMovieStatus(HttpServletRequest request, MovieInput movieInput) {
+        String movieName = movieInput.getMovieName();
+        String description = movieInput.getDescription();
+        String date = movieInput.getDate();
+        String statusName = movieInput.getStatusName();
+        int rating = movieInput.getRating();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("userId".equals(cookie.getName())) {
-                    return userMovieRepository.findById(new UserMovieId(Integer.valueOf(cookie.getValue()), movieId)).get();
+                    Movie movie = movieRepository.findByMovieNameAndDate(movieName, date);
+                    UserMovie userMovie = userMovieRepository.findById(new UserMovieId(Integer.valueOf(cookie.getValue()), movie.getId())).get();
+                    userMovie.setRating(rating);
+
+                    int statusId = 0;
+                    switch (statusName) {
+                        case "towatch" -> statusId = 1;
+                        case "seen" -> statusId = 2;
+                        case "tonotwatch" -> statusId = 3;
+                        default -> throw new IllegalArgumentException("Invalid status: " + statusName);
+                    }
+                    Status status = new Status();
+                    status.setStatusId(statusId);
+                    userMovie.setStatus(status);
+
+
+                    userMovieRepository.save(userMovie);
+                    return ResponseEntity.ok("Edit movie successful");
                 }
             }
         }
-        return userMovieRepository.findById(new UserMovieId(1, movieId)).get();
-        //return null;
+        throw new RuntimeException("Failed to edit movie");
     }
 
-    public ResponseEntity<String> saveUserMovie(HttpServletRequest request, UserMovie userMovie) {
+    public ResponseEntity<String> saveUserMovie(HttpServletRequest request, MovieInput movieInput) {
+        String movieName = movieInput.getMovieName();
+        String description = movieInput.getDescription();
+        String date = movieInput.getDate();
+        String statusName = movieInput.getStatusName();
+        int rating = movieInput.getRating();
+
         Movie movie = new Movie();
-        if (movieRepository.existsByMovieNameAndDate(userMovie.getMovie().getMovieName(), userMovie.getMovie().getDate())) {
-            movie = movieRepository.findByMovieNameAndDate(userMovie.getMovie().getMovieName(), userMovie.getMovie().getDate());
-            userMovie.setMovie(movie);
+        if (movieRepository.existsByMovieNameAndDate(movieName, date)) {
+            movie = movieRepository.findByMovieNameAndDate(movieName, date);
         }
         else {
-            userMovie.setMovie(movieRepository.save(userMovie.getMovie()));
+            movie.setMovieName(movieName);
+            movie.setDate(date);
+            movie.setDescription(description);
+            movie = movieRepository.save(movie);
         }
+
+        int statusId = 0;
+        switch (statusName) {
+            case "towatch" -> statusId = 1;
+            case "seen" -> statusId = 2;
+            case "tonotwatch" -> statusId = 3;
+            default -> throw new IllegalArgumentException("Invalid status: " + statusName);
+        }
+        Status status = new Status();
+        status.setStatusId(statusId);
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("userId".equals(cookie.getName())) {
-                    userMovie.setUser(userRepository.findById(Integer.valueOf(cookie.getValue())).get());
-                    UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), userMovie.getMovie().getId());
+                    UserMovie userMovie = new UserMovie(
+                            userRepository.findById(Integer.valueOf(cookie.getValue())).get(),
+                            movie,
+                            status,
+                            rating
+                    );
+                    UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), movie.getId());
                     userMovie.setId(userMovieId);
                     userMovieRepository.save(userMovie);
                     return ResponseEntity.ok("Add movie successful");
                 }
             }
         }
-        userMovie.setUser(userRepository.findById(1).get());
-        UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), userMovie.getMovie().getId());
-        userMovie.setId(userMovieId);
-        userMovieRepository.save(userMovie);
-        return ResponseEntity.ok("Add movie successful");
-        //return null;
+        throw new RuntimeException("Failed to add movie");
     }
 
-    public void deleteUserMovie(HttpServletRequest request, UserMovie userMovie) {
+    public ResponseEntity<String> deleteUserMovie(HttpServletRequest request, MovieInput movieInput) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("userId".equals(cookie.getName())) {
-                    userMovieRepository.deleteById(userMovie.getId());
+                    UserMovieId userMovieId = new UserMovieId(
+                            userRepository.findById(Integer.valueOf(cookie.getValue())).get().getId(),
+                            movieRepository.findByMovieNameAndDate(movieInput.getMovieName(), movieInput.getDate()).getId());
+                    userMovieRepository.deleteById(userMovieId);
+                    return ResponseEntity.ok("Remove movie successful");
                 }
             }
         }
+        throw new RuntimeException("Failed to remove movie");
     }
+
+    public List<Movie> generateRecommendations(HttpServletRequest request, List<String> constraints) {
+
+        List<UserMovie> seenUserMovies = this.getUserMoviesByStatusId(request, "seen");
+        List<UserMovie> unwantedUserMovies = this.getUserMoviesByStatusId(request, "tonotwatch");
+        List<UserMovie> watchlistUserMovies = this.getUserMoviesByStatusId(request, "towatch");
+
+        List<String> seenMovies = new ArrayList<>();
+        for (UserMovie seenUserMovie : seenUserMovies) {
+            seenMovies.add(seenUserMovie.getMovie().getMovieName());
+        }
+
+        List<String> unwantedMovies = new ArrayList<>();
+        for (UserMovie unwantedUserMovie : unwantedUserMovies) {
+            unwantedMovies.add(unwantedUserMovie.getMovie().getMovieName());
+        }
+
+        List<String> watchlistMovies = new ArrayList<>();
+        for (UserMovie watchUserMovie : watchlistUserMovies) {
+            watchlistMovies.add(watchUserMovie.getMovie().getMovieName());
+        }
+
+        JsonObject jsonObject = callOpenAI(seenMovies, unwantedMovies, watchlistMovies, constraints);
+        return convertRecommendationsToUserMovies(jsonObject);
+    }
+
 
     public JsonObject callOpenAI(List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {
         /*
@@ -135,8 +197,7 @@ public class MovieService {
         List<String> watchlistMovies = List.of("Interstellar");
         List<String> otherConstraints = List.of("Prefer movies rated above 8 on IMDb", "Genre: Sci-fi", "Theme: Romance");
          */
-
-        String apiKey = "API-KEY-HERE";
+        String apiKey = "";
         String model = "gpt-3.5-turbo";
         String url = "https://api.openai.com/v1/chat/completions";
         int maxRetries = 5;  // Define the maximum number of retries
@@ -251,5 +312,28 @@ public class MovieService {
         JsonObject error = new JsonObject();
         error.addProperty("error", "Max retries reached without successful response.");
         return error;
+    }
+
+    public List<Movie> convertRecommendationsToUserMovies(JsonObject jsonObject) {
+
+        JsonArray recommendations = jsonObject.getAsJsonArray("recommendations");
+
+        List<Movie> movies = new ArrayList<>();
+
+        for (JsonElement recommendation : recommendations) {
+            JsonObject movieData = recommendation.getAsJsonObject();
+            String name = movieData.get("name").getAsString();
+            String year = movieData.get("year").getAsString();
+            String description = movieData.get("description").getAsString();
+
+            Movie movie = new Movie();
+            movie.setMovieName(name);
+            movie.setDate(year);
+            movie.setDescription(description);
+
+            movies.add(movie);
+        }
+
+        return movies;
     }
 }

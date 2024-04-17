@@ -33,6 +33,3 @@ build/
 .vscode/
 
 /src/main/resources/application.properties
-backend/movie-recommendation-backend/src/main/resources/application.properties
-frontend/.idea/vcs.xml
-frontend/movie-recommendation-frontend/node_modules
