@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../components/ConfirmModal';
 import RatingModal from "../components/RatingModal";
 import './ToWatchPage.css';
-import './RatingModal.css';
 
 const initialMovies = [
   { id: 2, title: 'Interstellar' },
@@ -32,7 +31,7 @@ function StarRating({ rating }) {
 }
 
 
-function SeenPage() {
+function AvoidPage() {
     const [movies, setMovies] = useState(initialMovies);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [ratingModalOpen, setRatingModalOpen] = useState(false);
