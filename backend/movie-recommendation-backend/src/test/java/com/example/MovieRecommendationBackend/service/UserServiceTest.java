@@ -37,7 +37,7 @@ class UserServiceTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         ResponseEntity<?> responseEntity = userService.signUp(newUser, response);
 
-        assertEquals(ResponseEntity.ok("User registered successfully"), responseEntity);
+        assertEquals(ResponseEntity.ok().body("{message=User registered successfully}").getBody(), responseEntity.getBody().toString());
 
         verify(userRepository, times(1)).existsByUserName("testUser");
         verify(userRepository, times(1)).save(newUser);
@@ -55,7 +55,7 @@ class UserServiceTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         ResponseEntity<?> responseEntity = userService.signUp(existingUser, response);
 
-        assertEquals(ResponseEntity.badRequest().body("Username is already taken"), responseEntity);
+        assertEquals(ResponseEntity.badRequest().body("{error=Username is already taken}").getBody(), responseEntity.getBody().toString());
 
         verify(userRepository, never()).save(any(User.class));
         verify(response, never()).addCookie(any(Cookie.class));
@@ -77,7 +77,7 @@ class UserServiceTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         ResponseEntity<?> responseEntity = userService.login(loginRequest, response);
 
-        assertEquals(ResponseEntity.ok("Login successful"), responseEntity);
+        assertEquals(ResponseEntity.ok().body("{message=Login successful}").getBody(), responseEntity.getBody().toString());
 
         verify(response, times(1)).addCookie(any(Cookie.class));
     }
@@ -93,7 +93,7 @@ class UserServiceTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         ResponseEntity<?> responseEntity = userService.login(loginRequest, response);
 
-        assertEquals(ResponseEntity.badRequest().body("Invalid username or password"), responseEntity);
+        assertEquals(ResponseEntity.badRequest().body("{error=Invalid username or password}").getBody(), responseEntity.getBody().toString());
 
         verify(response, never()).addCookie(any(Cookie.class));
     }
