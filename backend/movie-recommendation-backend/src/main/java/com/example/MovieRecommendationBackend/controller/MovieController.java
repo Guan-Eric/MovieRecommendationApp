@@ -42,18 +42,18 @@ public class MovieController {
     }
 
     @PostMapping("/addmovie")
-    public ResponseEntity<String> addUserMovie(HttpServletRequest request, @RequestBody MovieInput movieInput) {
+    public ResponseEntity<?> addUserMovie(HttpServletRequest request, @RequestBody MovieInput movieInput) {
         return movieService.saveUserMovie(request, movieInput);
     }
 
     @PutMapping("/editmovie")
-    public ResponseEntity<String> updateUserMovieStatus(HttpServletRequest request, @RequestBody MovieInput movieInput) {
+    public ResponseEntity<?> updateUserMovieStatus(HttpServletRequest request, @RequestBody MovieInput movieInput) {
         return movieService.updateUserMovieStatus(request, movieInput);
     }
 
     @DeleteMapping("/removemovie")
-    public void deleteUserMovie(HttpServletRequest request, @RequestBody MovieInput movieInput) {
-        movieService.deleteUserMovie(request, movieInput);
+    public ResponseEntity<?> deleteUserMovie(HttpServletRequest request, @RequestBody MovieInput movieInput) {
+        return movieService.deleteUserMovie(request, movieInput);
     }
 
     @GetMapping("/logout")

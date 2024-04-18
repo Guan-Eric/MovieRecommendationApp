@@ -24,6 +24,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 
 @Service
@@ -55,7 +56,7 @@ public class MovieService {
                 });
     }
 
-    public ResponseEntity<String> updateUserMovieStatus(HttpServletRequest request, MovieInput movieInput) {
+    public ResponseEntity<?> updateUserMovieStatus(HttpServletRequest request, MovieInput movieInput) {
         String movieName = movieInput.getMovieName();
         String description = movieInput.getDescription();
         String date = movieInput.getDate();
@@ -82,14 +83,14 @@ public class MovieService {
 
 
                     userMovieRepository.save(userMovie);
-                    return ResponseEntity.ok("Edit movie successful");
+                    return ResponseEntity.ok(Map.of("message", "Edit movie successful"));
                 }
             }
         }
         throw new RuntimeException("Failed to edit movie");
     }
 
-    public ResponseEntity<String> saveUserMovie(HttpServletRequest request, MovieInput movieInput) {
+    public ResponseEntity<?> saveUserMovie(HttpServletRequest request, MovieInput movieInput) {
         String movieName = movieInput.getMovieName();
         String description = movieInput.getDescription();
         String date = movieInput.getDate();
@@ -130,14 +131,14 @@ public class MovieService {
                     UserMovieId userMovieId = new UserMovieId(userMovie.getUser().getId(), movie.getId());
                     userMovie.setId(userMovieId);
                     userMovieRepository.save(userMovie);
-                    return ResponseEntity.ok("Add movie successful");
+                    return ResponseEntity.ok(Map.of("message","Add movie successful"));
                 }
             }
         }
         throw new RuntimeException("Failed to add movie");
     }
 
-    public ResponseEntity<String> deleteUserMovie(HttpServletRequest request, MovieInput movieInput) {
+    public ResponseEntity<?> deleteUserMovie(HttpServletRequest request, MovieInput movieInput) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -146,7 +147,7 @@ public class MovieService {
                             userRepository.findById(Integer.valueOf(cookie.getValue())).get().getId(),
                             movieRepository.findByMovieNameAndDate(movieInput.getMovieName(), movieInput.getDate()).getId());
                     userMovieRepository.deleteById(userMovieId);
-                    return ResponseEntity.ok("Remove movie successful");
+                    return ResponseEntity.ok(Map.of("message","Remove movie successful"));
                 }
             }
         }
