@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -136,8 +136,11 @@ class MovieServiceTest {
         assertDoesNotThrow(() -> movieService.deleteUserMovie(request, movieInput));
     }
 
+    @Value("${openai.apiKey}")
+    String apiKey;
     @Test
     void testGenerateRecommendations() {
+        MovieService movieServiceMock = mock(MovieService.class);
         HttpServletRequest request = mock(HttpServletRequest.class);
         JsonObject mockResponse = new JsonObject();
         JsonArray recommendations = new JsonArray();
@@ -146,11 +149,20 @@ class MovieServiceTest {
         movie1.addProperty("year", "2014");
         movie1.addProperty("description", "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.");
         recommendations.add(movie1);
+        JsonObject movie2 = new JsonObject();
+        movie2.addProperty("name", "Interstellar");
+        movie2.addProperty("year", "2014");
+        movie2.addProperty("description", "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.");
+        recommendations.add(movie2);
         mockResponse.add("recommendations", recommendations);
-        when(movieService.callOpenAI(any(), any(), any(), any())).thenReturn(mockResponse);
-
+        List<String> list = new ArrayList<>();
+        List<Movie> movieRecommendations = new ArrayList<>();
+        Movie movie = new Movie(1, "Interstellar", "2014", "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.", "1" ,"1", null);
+        movieRecommendations.add(movie);
+        when(movieServiceMock.callOpenAI(apiKey, list, list, list, list)).thenReturn(mockResponse);
+        when(movieServiceMock.convertRecommendationsToUserMovies(mockResponse)).thenReturn(movieRecommendations);
         List<String> constraints = new ArrayList<>();
-        List<Movie> movieRecommendations = movieService.generateRecommendations(request, constraints);
+        movieServiceMock.generateRecommendations(request, constraints);
 
         assertEquals(1, movieRecommendations.size());
         assertEquals("Interstellar", movieRecommendations.get(0).getMovieName());
