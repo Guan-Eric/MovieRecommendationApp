@@ -171,7 +171,7 @@ public class MovieService {
         List<String> seenMovies = new ArrayList<>();
         if (seenUserMovies != null) {
             for (UserMovie seenUserMovie : seenUserMovies) {
-                seenMovies.add(seenUserMovie.getMovie().getMovieName() + seenUserMovie.getRating());
+                seenMovies.add(seenUserMovie.getMovie().getMovieName() + "rating: " + seenUserMovie.getRating());
             }
         }
 
@@ -189,11 +189,11 @@ public class MovieService {
             }
         }
 
-        JsonObject jsonObject = callOpenAI(seenMovies, unwantedMovies, watchlistMovies, constraints);
+        JsonObject jsonObject = callOpenAI(apiKey, seenMovies, unwantedMovies, watchlistMovies, constraints);
         return convertRecommendationsToUserMovies(jsonObject);
     }
 
-    public JsonObject callOpenAI(List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {
+    public JsonObject callOpenAI(String apiKey, List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {
         /*
         Sample inputs:
         List<String> seenMovies = List.of("Blade Runner", "The Matrix");
