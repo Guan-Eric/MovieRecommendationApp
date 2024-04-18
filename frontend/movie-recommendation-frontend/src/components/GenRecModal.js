@@ -47,6 +47,7 @@ function GenRecModal({ isOpen, onClose, onGenerate }) {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(postData),
       });
       const data = await response.json();
