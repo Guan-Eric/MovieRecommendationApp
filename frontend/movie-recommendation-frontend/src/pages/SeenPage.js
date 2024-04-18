@@ -6,7 +6,6 @@ import GenRecModal from '../components/GenRecModal';
 import './ToWatchPage.css';
 import '../components/RatingModal.css';
 
-
 function StarRating({ rating }) {
     return (
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
@@ -16,7 +15,7 @@ function StarRating({ rating }) {
                     <span
                         key={index}
                         className={index <= rating ? 'on' : 'off'}
-                        style={{ padding: '0', fontSize: '24px', cursor: 'default' }} 
+                        style={{ padding: '0', fontSize: '24px', cursor: 'default' }}
                     >
                         &#9733; {/* Star Unicode Character */}
                     </span>
@@ -51,6 +50,12 @@ function SeenPage() {
             .catch(error => console.error('Error fetching movies:', error));
     }, []);
 
+    const handleCardClick = (movie) => {
+        console.log('Card clicked:', movie.title);
+        setSelectedMovie(movie);
+        setRatingModalOpen(true);
+    };
+
     const handleGenerateRecommendations = () => {
         console.log('Opening Generate Recommendations Modal');
         setGenRecModalOpen(true);
@@ -62,31 +67,47 @@ function SeenPage() {
     };
 
     const handleRemoveMovie = (e, movie) => {
-        e.stopPropagation();  // Prevents triggering the card click event
+        e.stopPropagation();
         console.log('Preparing to remove:', movie.title);
         setSelectedMovie(movie);
         setConfirmOpen(true);
     };
 
-    const handleCardClick = (movie) => {
-        setSelectedMovie(movie);
-        setRatingModalOpen(true);
+    const removeMovie = () => {
+        fetch('http://localhost:8080/removemovie', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ movieName: selectedMovie.title, date: selectedMovie.year }),
+            credentials: 'include'
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete the movie');
+            }
+            return response.json();
+        }).then(() => {
+            console.log('Movie removed:', selectedMovie.title);
+            setMovies(currentMovies => currentMovies.filter(m => m.id !== selectedMovie.id));
+        }).catch(error => {
+            console.error('Error removing movie:', error);
+        }).finally(() => {
+            setConfirmOpen(false);
+        });
     };
 
     const updateMovieRating = (newRating) => {
         console.log('Updating Rating for:', selectedMovie.title, 'to', newRating);
-        // Update the rating locally for immediate feedback
         setMovies(currentMovies => currentMovies.map(m => m.id === selectedMovie.id ? { ...m, rating: newRating } : m));
         setRatingModalOpen(false);
-        // Optionally: Send a PUT/POST request to your backend to update the rating in the database
     };
 
     return (
         <div className="to-watch-container">
             <div className="to-watch-header">
-              <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
-              <button onClick={() => navigate('/seen')} className="nav-button nav-button-active">Seen</button>
-              <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
+                <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
+                <button onClick={() => navigate('/seen')} className="nav-button nav-button-active">Seen</button>
+                <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
             </div>
             <div className="movie-list">
                 {movies.map(movie => (
@@ -108,11 +129,7 @@ function SeenPage() {
             <ConfirmModal
                 isOpen={confirmOpen}
                 onClose={() => setConfirmOpen(false)}
-                onConfirm={() => {
-                    console.log('Removing:', selectedMovie.title);
-                    setMovies(currentMovies => currentMovies.filter(m => m.id !== selectedMovie.id));
-                    setConfirmOpen(false);
-                }}
+                onConfirm={removeMovie}
             >
                 Are you sure you want to remove this movie?
             </ConfirmModal>
@@ -129,3 +146,4 @@ function SeenPage() {
 }
 
 export default SeenPage;
+

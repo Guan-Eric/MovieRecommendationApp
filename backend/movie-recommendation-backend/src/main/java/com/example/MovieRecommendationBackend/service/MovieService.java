@@ -189,7 +189,7 @@ public class MovieService {
         List<String> watchlistMovies = List.of("Interstellar");
         List<String> otherConstraints = List.of("Prefer movies rated above 8 on IMDb", "Genre: Sci-fi", "Theme: Romance");
          */
-        String model = "gpt-3.5-turbo";
+        String model = "gpt-4-turbo";
         String url = "https://api.openai.com/v1/chat/completions";
         int maxRetries = 5;  // Define the maximum number of retries
         int attempts = 0;
