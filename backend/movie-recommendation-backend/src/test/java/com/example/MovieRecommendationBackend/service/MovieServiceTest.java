@@ -70,7 +70,7 @@ class MovieServiceTest {
         when(movieRepository.findByMovieNameAndDate("Inception", "2010")).thenReturn(movie);
         when(userMovieRepository.findById(new UserMovieId(1, movie.getId()))).thenReturn(Optional.of(userMovie));
 
-        ResponseEntity<String> responseEntity = movieService.updateUserMovieStatus(request, movieInput);
+        ResponseEntity<?> responseEntity = movieService.updateUserMovieStatus(request, movieInput);
 
         assertEquals("Edit movie successful", responseEntity.getBody());
     }
@@ -105,7 +105,7 @@ class MovieServiceTest {
         movieInput.setStatusName("towatch");
         movieInput.setRating(5);
 
-        ResponseEntity<String> responseEntity = movieService.saveUserMovie(request, movieInput);
+        ResponseEntity<?> responseEntity = movieService.saveUserMovie(request, movieInput);
 
         assertEquals("Add movie successful", responseEntity.getBody());
     }

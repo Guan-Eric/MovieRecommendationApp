@@ -4,7 +4,8 @@ import GenRecModal from '../components/GenRecModal';
 import ConfirmModal from '../components/ConfirmModal';
 import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
-import { useAuth } from '../context/AuthContext';
+import Sidebar from "../components/Sidebar";
+
 
 
 function ToWatchPage() {
@@ -14,7 +15,6 @@ function ToWatchPage() {
     const [ratingOpen, setRatingOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
-    const {logout} = useAuth();
 
     useEffect(() => {
         fetch('http://localhost:8080/towatch', {credentials: 'include'})
@@ -91,13 +91,12 @@ function ToWatchPage() {
     return (
         <div className="to-watch-container">
             <div className="to-watch-header">
+                <Sidebar />
                 <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-active">To Watch</button>
                 <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
                 <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
             </div>
-            <div className="logout-container">
-                <button onClick={logout} className="logout-button">Logout</button>
-            </div>
+
             <div className="movie-list">
                 {movies.map(movie => (
                     <div key={movie.id} className="movie-card">

@@ -21,7 +21,7 @@
     display: flex;
     justify-content: space-between;  
     align-items: center;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 .recommend-button {
@@ -42,9 +42,9 @@
 .movie-list {
   overflow-y: auto;  
   flex-grow: 1;
-  margin-top: 60px;
+  margin-top: 80px;
   margin-bottom: 60px;
-  padding: 0 0px;
+  padding: 0;
 }
 
 .movie-card {
@@ -86,6 +86,7 @@
 .red-button {
   background-color: #dc3545;
 }
+
 
 .fixed-bottom-container {
     position: fixed;
@@ -129,16 +130,13 @@
     color: #000;
 }
 
-.logout-container {
-    text-align: center;
-    margin-top: 50px; /* Adjust space between nav buttons and logout button */
-}
-
 .logout-button {
     padding: 8px 20px;
-    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 15px;
     color: #fff;
-    background-color: #f44336; /* Red background for logout */
+    background-color: #5a5a5a;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -148,5 +146,4 @@
 .logout-button:hover {
     background-color: #c33d2b; /* Darker red on hover */
 }
-
 
