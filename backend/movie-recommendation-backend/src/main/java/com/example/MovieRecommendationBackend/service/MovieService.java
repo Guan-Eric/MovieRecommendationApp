@@ -7,6 +7,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.MovieRecommendationBackend.repository.MovieRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,6 @@ public class MovieService {
                     System.out.println("No userId cookie found");
                     return new ArrayList<>();
                 });
-
     }
 
     public ResponseEntity<String> updateUserMovieStatus(HttpServletRequest request, MovieInput movieInput) {
@@ -178,7 +178,8 @@ public class MovieService {
         return convertRecommendationsToUserMovies(jsonObject);
     }
 
-
+    @Value("${openai.apiKey}")
+    private String apiKey;
     public JsonObject callOpenAI(List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {
         /*
         Sample inputs:
@@ -187,7 +188,6 @@ public class MovieService {
         List<String> watchlistMovies = List.of("Interstellar");
         List<String> otherConstraints = List.of("Prefer movies rated above 8 on IMDb", "Genre: Sci-fi", "Theme: Romance");
          */
-        String apiKey = "";
         String model = "gpt-3.5-turbo";
         String url = "https://api.openai.com/v1/chat/completions";
         int maxRetries = 5;  // Define the maximum number of retries
