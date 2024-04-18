@@ -4,7 +4,9 @@ import GenRecModal from '../components/GenRecModal';
 import ConfirmModal from '../components/ConfirmModal';
 import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
+import Sidebar from "../components/Sidebar";
 import { useAuth } from '../context/AuthContext';
+
 
 function ToWatchPage() {
     const [movies, setMovies] = useState([]);
@@ -124,13 +126,12 @@ function ToWatchPage() {
     return (
         <div className="to-watch-container">
             <div className="to-watch-header">
+                <Sidebar />
                 <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-active">To Watch</button>
                 <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
                 <button onClick={() => navigate('/avoid')} className="nav-button nav-button-inactive">To Avoid</button>
             </div>
-            <div className="logout-container">
-                <button onClick={logout} className="logout-button">Logout</button>
-            </div>
+
             <div className="movie-list">
                 {movies.map(movie => (
                     <div key={movie.id} className="movie-card">

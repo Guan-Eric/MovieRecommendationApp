@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../components/ConfirmModal';
 import GenRecModal from '../components/GenRecModal';
 import './ToWatchPage.css';
+import Sidebar from "../components/Sidebar";
 
 function AvoidPage() {
     const [movies, setMovies] = useState([]);
@@ -72,9 +73,10 @@ function AvoidPage() {
     return (
         <div className="to-watch-container">
             <div className="to-watch-header">
-                <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
-                <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
-                <button onClick={() => navigate('/avoid')} className="nav-button nav-button-active">To Avoid</button>
+                <Sidebar/>
+              <button onClick={() => navigate('/to-watch')} className="nav-button nav-button-inactive">To Watch</button>
+              <button onClick={() => navigate('/seen')} className="nav-button nav-button-inactive">Seen</button>
+              <button onClick={() => navigate('/avoid')} className="nav-button nav-button-active">To Avoid</button>
             </div>
             <div className="movie-list">
                 {movies.map(movie => (
