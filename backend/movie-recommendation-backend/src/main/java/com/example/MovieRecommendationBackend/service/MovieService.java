@@ -171,7 +171,7 @@ public class MovieService {
         List<String> seenMovies = new ArrayList<>();
         if (seenUserMovies != null) {
             for (UserMovie seenUserMovie : seenUserMovies) {
-                seenMovies.add(seenUserMovie.getMovie().getMovieName() + "rating: " + seenUserMovie.getRating());
+                seenMovies.add(seenUserMovie.getMovie().getMovieName() + " rating: " + seenUserMovie.getRating());
             }
         }
 
