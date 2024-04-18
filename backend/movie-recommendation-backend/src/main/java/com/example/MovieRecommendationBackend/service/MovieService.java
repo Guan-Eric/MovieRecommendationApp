@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -24,7 +22,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 
 @Service
@@ -38,6 +35,9 @@ public class MovieService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Value("${openai.apiKey}")
+    String apiKey;
 
     public List<UserMovie> getUserMoviesByStatusId(HttpServletRequest request, String status) {
         int statusId = switch (status) {
@@ -67,7 +67,15 @@ public class MovieService {
             for (Cookie cookie : cookies) {
                 if ("userId".equals(cookie.getName())) {
                     Movie movie = movieRepository.findByMovieNameAndDate(movieName, date);
-                    UserMovie userMovie = userMovieRepository.findById(new UserMovieId(Integer.valueOf(cookie.getValue()), movie.getId())).get();
+                    Optional<UserMovie> optionalUserMovie = userMovieRepository.findById(new UserMovieId(Integer.valueOf(cookie.getValue()), movie.getId()));
+
+                    UserMovie userMovie;
+                    if (optionalUserMovie.isPresent()) {
+                        userMovie = optionalUserMovie.get();
+                    }
+                    else {
+                        throw new RuntimeException("UserMovie not found");
+                    }
                     userMovie.setRating(rating);
 
                     int statusId = 0;
@@ -161,27 +169,31 @@ public class MovieService {
         List<UserMovie> watchlistUserMovies = this.getUserMoviesByStatusId(request, "towatch");
 
         List<String> seenMovies = new ArrayList<>();
-        for (UserMovie seenUserMovie : seenUserMovies) {
-            seenMovies.add(seenUserMovie.getMovie().getMovieName());
+        if (seenUserMovies != null) {
+            for (UserMovie seenUserMovie : seenUserMovies) {
+                seenMovies.add(seenUserMovie.getMovie().getMovieName() + " rating: " + seenUserMovie.getRating());
+            }
         }
 
         List<String> unwantedMovies = new ArrayList<>();
-        for (UserMovie unwantedUserMovie : unwantedUserMovies) {
-            unwantedMovies.add(unwantedUserMovie.getMovie().getMovieName());
+        if (unwantedUserMovies != null) {
+            for (UserMovie unwantedUserMovie : unwantedUserMovies) {
+                unwantedMovies.add(unwantedUserMovie.getMovie().getMovieName());
+            }
         }
 
         List<String> watchlistMovies = new ArrayList<>();
-        for (UserMovie watchUserMovie : watchlistUserMovies) {
-            watchlistMovies.add(watchUserMovie.getMovie().getMovieName());
+        if (watchlistUserMovies != null) {
+            for (UserMovie watchUserMovie : watchlistUserMovies) {
+                watchlistMovies.add(watchUserMovie.getMovie().getMovieName());
+            }
         }
 
-        JsonObject jsonObject = callOpenAI(seenMovies, unwantedMovies, watchlistMovies, constraints);
+        JsonObject jsonObject = callOpenAI(apiKey, seenMovies, unwantedMovies, watchlistMovies, constraints);
         return convertRecommendationsToUserMovies(jsonObject);
     }
 
-    @Value("${openai.apiKey}")
-    private String apiKey;
-    public JsonObject callOpenAI(List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {
+    public JsonObject callOpenAI(String apiKey, List<String> seenMovies, List<String> unwantedMovies, List<String> watchlistMovies, List<String> otherConstraints) {
         /*
         Sample inputs:
         List<String> seenMovies = List.of("Blade Runner", "The Matrix");
@@ -189,7 +201,7 @@ public class MovieService {
         List<String> watchlistMovies = List.of("Interstellar");
         List<String> otherConstraints = List.of("Prefer movies rated above 8 on IMDb", "Genre: Sci-fi", "Theme: Romance");
          */
-        String model = "gpt-3.5-turbo";
+        String model = "gpt-4-turbo";
         String url = "https://api.openai.com/v1/chat/completions";
         int maxRetries = 5;  // Define the maximum number of retries
         int attempts = 0;
@@ -224,23 +236,23 @@ public class MovieService {
                 // Seen movies will be strings of the form "Movie name (year) (my rating: X/5)
                 JsonObject context = new JsonObject();
                 JsonArray seenArray = new JsonArray();
-                seenMovies.forEach(seenArray::add);
+                if (seenMovies != null) seenMovies.forEach(seenArray::add);
                 context.add("seenMovies", seenArray);
 
 
                 // Just strings Movie name (year)
                 JsonArray unwantedArray = new JsonArray();
-                unwantedMovies.forEach(unwantedArray::add);
+                if (unwantedMovies != null) unwantedMovies.forEach(unwantedArray::add);
                 context.add("unwantedMovies", unwantedArray);
 
                 // Just strings Movie name (year)
                 JsonArray watchlistArray = new JsonArray();
-                watchlistMovies.forEach(watchlistArray::add);
+                if (watchlistMovies != null) watchlistMovies.forEach(watchlistArray::add);
                 context.add("watchlistMovies", watchlistArray);
 
                 // This is just a list of arbitrary "preference" strings e.g., "Prefer movies rated above 8 on IMDb", "Genre: Sci-fi", "Theme: Romance"
                 JsonArray constraintsArray = new JsonArray();
-                otherConstraints.forEach(constraintsArray::add);
+                if (otherConstraints != null) otherConstraints.forEach(constraintsArray::add);
                 context.add("otherConstraints", constraintsArray);
 
                 String prompt = "Suggest 10 new movies excluding the ones I've seen or don't want to see, and not already on my watchlist, considering other constraints.";

@@ -13,7 +13,7 @@ function AvoidPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:8080/tonotwatch',{
+        fetch('http://localhost:8080/tonotwatch', {
             credentials: 'include'
         })
             .then(response => response.json())
@@ -48,9 +48,26 @@ function AvoidPage() {
     };
 
     const confirmRemoval = () => {
-        console.log('Removing:', selectedMovie.title);
-        setMovies(currentMovies => currentMovies.filter(m => m.id !== selectedMovie.id));
-        setConfirmOpen(false);
+        fetch('http://localhost:8080/removemovie', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ movieName: selectedMovie.title, date: selectedMovie.year }),
+            credentials: 'include'
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete the movie');
+            }
+            return response.json();
+        }).then(() => {
+            console.log('Movie removed:', selectedMovie.title);
+            setMovies(currentMovies => currentMovies.filter(m => m.id !== selectedMovie.id));
+        }).catch(error => {
+            console.error('Error removing movie:', error);
+        }).finally(() => {
+            setConfirmOpen(false);
+        });
     };
 
     return (
@@ -90,3 +107,4 @@ function AvoidPage() {
 }
 
 export default AvoidPage;
+

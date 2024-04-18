@@ -1,32 +1,35 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './ToWatchPage.css'; 
 
 function RecommendationsPage() {
-    const [recommendations, setRecommendations] = useState([
-        { id: 4, title: 'Avatar', description: 'A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.', genre: 'Fantasy' },
-        { id: 5, title: 'Gravity', description: 'Two astronauts work together to survive after an accident leaves them stranded in space.', genre: 'Sci-Fi' },
-        { id: 6, title: 'Joker', description: 'In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime.', genre: 'Drama' },
-    ]);
+    const location = useLocation(); // Hook to access route state
     const navigate = useNavigate();
 
+    // Initialize state with movies from route state or fallback to a default empty array
+    const [recommendations, setRecommendations] = useState(location.state?.movies || []);
+
+    // This function is used to remove a movie from the recommendations list
     const handleRemoveMovie = (movieId) => {
         const updatedRecommendations = recommendations.filter(movie => movie.id !== movieId);
         setRecommendations(updatedRecommendations);
     };
 
+    // Function to handle adding a movie to the "To Watch" list
     const addToWatch = movie => {
-        console.log('Add to To Watch:', movie.title);
+        console.log('Add to To Watch:', movie.movieName); // Notice the use of movieName
         handleRemoveMovie(movie.id);
     };
 
+    // Function to handle adding a movie to the "To Avoid" list
     const addToAvoid = movie => {
-        console.log('Add to To Avoid:', movie.title);
+        console.log('Add to To Avoid:', movie.movieName); // Notice the use of movieName
         handleRemoveMovie(movie.id);
     };
 
+    // Function to handle adding a movie to the "Already Seen" list
     const addToSeen = movie => {
-        console.log('Add to Already Seen:', movie.title);
+        console.log('Add to Already Seen:', movie.movieName); // Notice the use of movieName
         handleRemoveMovie(movie.id);
     };
 
@@ -35,9 +38,9 @@ function RecommendationsPage() {
             <div className="to-watch-header">Recommendations</div>
             <div className="movie-list">
                 {recommendations.map(movie => (
-                    <div key={movie.id} className="movie-card">
+                    <div key={movie.movieName} className="movie-card">  {/* Using movieName as key */}
                         <div className="movie-info">
-                            <h3>{movie.title}</h3>
+                            <h3>{movie.movieName}</h3>
                             <p>{movie.description}</p>
                         </div>
                         <div className="movie-actions">
@@ -56,3 +59,4 @@ function RecommendationsPage() {
 }
 
 export default RecommendationsPage;
+

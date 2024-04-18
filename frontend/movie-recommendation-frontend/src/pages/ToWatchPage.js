@@ -1,23 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GenRecModal from '../components/GenRecModal';
 import ConfirmModal from '../components/ConfirmModal';
 import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
 import Sidebar from "../components/Sidebar";
-
+import { useAuth } from '../context/AuthContext';
 
 
 function ToWatchPage() {
     const [movies, setMovies] = useState([]);
+    const [loadMovies, setLoadMovies] = useState(false);  // State to trigger re-fetching movies
     const [genRecModalOpen, setGenRecModalOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [ratingOpen, setRatingOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
-    useEffect(() => {
-        fetch('http://localhost:8080/towatch', {credentials: 'include'})
+    const fetchMovies = () => {
+        fetch('http://localhost:8080/towatch', { credentials: 'include' })
             .then(response => response.json())
             .then(data => setMovies(data.map(item => ({
                 id: item.movie.id,
@@ -31,7 +33,12 @@ function ToWatchPage() {
                 rating: item.rating
             }))))
             .catch(error => console.error('Error fetching movies:', error));
-    }, []);
+    };
+
+    // Initial fetch and re-fetch whenever loadMovies changes
+    useEffect(() => {
+        fetchMovies();
+    }, [loadMovies]);
 
     const handleGenerateRecommendations = () => {
         console.log('Opening Generate Recommendations Modal');
@@ -51,6 +58,33 @@ function ToWatchPage() {
 
     const confirmRemoval = () => {
         console.log('Removing:', selectedMovie.title);
+        const payload = {
+            movieName: selectedMovie.title,
+            date: selectedMovie.year
+        };
+
+        fetch('http://localhost:8080/removemovie', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(payload),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to delete the movie');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Movie removed successfully:', data);
+            setLoadMovies(!loadMovies);  // Toggle to re-fetch movies
+        })
+        .catch(error => {
+            console.error('Error removing movie:', error);
+        });
+
         setConfirmOpen(false);
     };
 
@@ -62,7 +96,6 @@ function ToWatchPage() {
 
     const confirmRating = (movie, rating) => {
         console.log('Rated:', movie.title, 'Rating:', rating);
-        setRatingOpen(false);
         const payload = {
             movieName: movie.title,
             date: movie.year,
@@ -81,11 +114,13 @@ function ToWatchPage() {
         .then(response => response.json())
         .then(data => {
             console.log('Movie updated successfully:', data);
-            // Optionally update the local state to reflect the change
+            setLoadMovies(!loadMovies);  // Toggle to re-fetch movies
         })
         .catch(error => {
             console.error('Error updating movie:', error);
         });
+
+        setRatingOpen(false);
     };
 
     return (
@@ -112,16 +147,14 @@ function ToWatchPage() {
                 ))}
             </div>
             <div className="fixed-bottom-container">
-                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations
-                </button>
+                <button onClick={handleGenerateRecommendations} className="recommend-button">Generate Recommendations</button>
             </div>
             {genRecModalOpen && <GenRecModal isOpen={genRecModalOpen} onClose={() => setGenRecModalOpen(false)}
                                              onGenerate={goToRecommendations}/>}
             <ConfirmModal
                 isOpen={confirmOpen}
                 onClose={() => setConfirmOpen(false)}
-                onConfirm={confirmRemoval}
-            >
+                onConfirm={confirmRemoval}>
                 Are you sure you want to remove this movie?
             </ConfirmModal>
             <RatingModal
