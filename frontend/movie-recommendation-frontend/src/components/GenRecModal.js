@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './GenRecModal.css';
 
 function GenRecModal({ isOpen, onClose, onGenerate }) {
+  const navigate = useNavigate(); // Hook for navigation
+
   const options = {
     Genre: ["Action", "Comedy", "Drama", "Horror", "Science Fiction", "Romance", "Thriller", "Mystery", "Adventure", "Fantasy", "Crime", "Documentary", "Animation", "Historical", "Musical"],
     Plot: ["Twist-filled", "Hero's journey", "Mystery-solving", "Thought-provoking", "Coming-of-age", "Revenge", "Survival", "Redemption", "Quest", "Conspiracy", "Time-travel", "Psychological thriller", "Heist", "Courtroom drama", "Political intrigue"],
@@ -52,6 +55,7 @@ function GenRecModal({ isOpen, onClose, onGenerate }) {
       });
       const data = await response.json();
       onGenerate(data);
+      navigate('/recommendations', { state: { movies: data } }); // Navigate with state
     } catch (error) {
       console.error("Failed to send data:", error);
     }
