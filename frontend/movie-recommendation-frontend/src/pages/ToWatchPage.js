@@ -6,6 +6,8 @@ import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
 import Sidebar from "../components/Sidebar";
 import { useAuth } from '../context/AuthContext';
+import { MdDelete } from "react-icons/md";
+import { MdRemoveRedEye } from "react-icons/md";
 
 
 function ToWatchPage() {
@@ -140,8 +142,8 @@ function ToWatchPage() {
                             <p>{movie.description}</p>
                         </div>
                         <div className="movie-actions">
-                            <button className="button green-button" onClick={() => handleRating(movie)}>✔️</button>
-                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
+                            <button className="button green-button" onClick={() => handleRating(movie)}><MdRemoveRedEye /></button>
+                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}><MdDelete /></button>
                         </div>
                     </div>
                 ))}

@@ -70,13 +70,16 @@
 }
 
 .button {
+  display: flex;
+  flex-direction: column;
   margin: 5px 0;
-  padding: 16px 16px;
+  align-items: center;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   color: white;
-  font-size:20px;
+  font-size: 20px;
+  width: 85px;
 }
 
 .green-button {
@@ -87,6 +90,9 @@
   background-color: #dc3545;
 }
 
+.button span:last-child {
+  font-size: 10px;
+}
 
 .fixed-bottom-container {
     position: fixed;

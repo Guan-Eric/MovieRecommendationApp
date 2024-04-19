@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import RatingModal from '../components/RatingModal'; // Make sure the path is correct
 import './ToWatchPage.css';
+import { IoMdEyeOff } from "react-icons/io";
+import { MdOutlineAddCircle } from "react-icons/md";
+import { MdRemoveRedEye } from "react-icons/md";
 
 function RecommendationsPage() {
     const location = useLocation();
@@ -82,9 +85,18 @@ function RecommendationsPage() {
                             <p>Release Year: {movie.date}</p>
                         </div>
                         <div className="movie-actions">
-                            <button className="button green-button" onClick={() => addToWatch(movie)}>Want to watch</button>
-                            <button className="button red-button" onClick={() => addToAvoid(movie)}>Don't want to watch</button>
-                            <button className="button" onClick={() => addToSeen(movie)}>Already seen</button>
+                            <button title="To Watch" className="button green-button" onClick={() => addToWatch(movie)}>
+                                <span><MdOutlineAddCircle/></span>
+                                <span>To Watch</span>
+                            </button>
+                            <button className="button red-button" onClick={() => addToAvoid(movie)}>
+                                <span><IoMdEyeOff/></span>
+                                <span>Avoid</span>
+                            </button>
+                            <button className="button" onClick={() => addToSeen(movie)}>
+                                <span><MdRemoveRedEye/></span>
+                                <span>Seen</span>
+                            </button>
                         </div>
                     </div>
                 ))}
