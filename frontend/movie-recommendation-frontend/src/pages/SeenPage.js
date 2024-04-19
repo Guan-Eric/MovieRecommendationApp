@@ -153,7 +153,10 @@ function SeenPage() {
                             <StarRating rating={movie.rating} />
                         </div>
                         <div className="movie-actions">
-                            <button className="button red-button" onClick={(e) => handleRemoveMovie(e, movie)}><MdDelete/></button>
+                            <button className="button red-button" onClick={(e) => handleRemoveMovie(e, movie)}>
+                                <span><MdDelete/></span>
+                                <span>Remove</span>
+                            </button>
                         </div>
                     </div>
                 ))}

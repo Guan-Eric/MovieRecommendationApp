@@ -142,8 +142,14 @@ function ToWatchPage() {
                             <p>{movie.description}</p>
                         </div>
                         <div className="movie-actions">
-                            <button className="button green-button" onClick={() => handleRating(movie)}><MdRemoveRedEye /></button>
-                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}><MdDelete /></button>
+                            <button className="button green-button" onClick={() => handleRating(movie)}>
+                                <span><MdRemoveRedEye/></span>
+                                <span>Seen</span>
+                            </button>
+                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>
+                                <span><MdDelete/></span>
+                                <span>Remove</span>
+                            </button>
                         </div>
                     </div>
                 ))}
