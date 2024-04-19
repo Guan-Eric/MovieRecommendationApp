@@ -1,62 +1,109 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './ToWatchPage.css'; 
+import RatingModal from '../components/RatingModal'; // Make sure the path is correct
+import './ToWatchPage.css';
 
 function RecommendationsPage() {
-    const location = useLocation(); // Hook to access route state
+    const location = useLocation();
     const navigate = useNavigate();
 
-    // Initialize state with movies from route state or fallback to a default empty array
-    const [recommendations, setRecommendations] = useState(location.state?.movies || []);
+    // Enhance movie data with a fallback ID right from the beginning
+    const initialMovies = location.state?.movies.map(movie => ({
+        ...movie,
+        id: movie.id || `fallback-${Math.random().toString(16).slice(2)}`
+    })) || [];
 
-    // This function is used to remove a movie from the recommendations list
+    const [recommendations, setRecommendations] = useState(initialMovies);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedMovie, setSelectedMovie] = useState(null);
+
+    const postMovie = async (movie, status, rating = null) => {
+        try {
+            const response = await fetch('http://localhost:8080/addmovie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    movieName: movie.movieName,
+                    description: movie.description,
+                    date: movie.date,
+                    statusName: status,
+                    rating: rating,
+                }),
+            });
+
+            const data = await response.json();
+            console.log('Response:', data);
+            if (response.ok) {
+                handleRemoveMovie(movie.id);
+            } else {
+                throw new Error(data.message || "Failed to update movie status");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            closeModal(); // Ensure modal is closed
+        }
+    };
+
     const handleRemoveMovie = (movieId) => {
-        const updatedRecommendations = recommendations.filter(movie => movie.id !== movieId);
-        setRecommendations(updatedRecommendations);
+        setRecommendations(prevRecommendations => 
+            prevRecommendations.filter(movie => movie.id !== movieId)
+        );
     };
 
-    // Function to handle adding a movie to the "To Watch" list
-    const addToWatch = movie => {
-        console.log('Add to To Watch:', movie.movieName); // Notice the use of movieName
-        handleRemoveMovie(movie.id);
-    };
-
-    // Function to handle adding a movie to the "To Avoid" list
-    const addToAvoid = movie => {
-        console.log('Add to To Avoid:', movie.movieName); // Notice the use of movieName
-        handleRemoveMovie(movie.id);
-    };
-
-    // Function to handle adding a movie to the "Already Seen" list
+    const addToWatch = movie => postMovie(movie, 'towatch');
+    const addToAvoid = movie => postMovie(movie, 'tonotwatch');
     const addToSeen = movie => {
-        console.log('Add to Already Seen:', movie.movieName); // Notice the use of movieName
-        handleRemoveMovie(movie.id);
+        setSelectedMovie(movie);  // Set the current movie for rating
+        setIsModalOpen(true);     // Open the rating modal
+    };
+
+    const handleRatingConfirm = (movie, rating) => {
+        postMovie(movie, 'seen', rating);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedMovie(null);  // Clear the selected movie
     };
 
     return (
         <div className="to-watch-container">
-            <div className="to-watch-header">Recommendations</div>
+            <div className="to-watch-header">AI-Generated Recommendations</div>
             <div className="movie-list">
                 {recommendations.map(movie => (
-                    <div key={movie.movieName} className="movie-card">  {/* Using movieName as key */}
+                    <div key={movie.id} className="movie-card">
                         <div className="movie-info">
                             <h3>{movie.movieName}</h3>
                             <p>{movie.description}</p>
+                            <p>Release Year: {movie.date}</p>
                         </div>
                         <div className="movie-actions">
-                            <button className="button green-button" onClick={() => addToWatch(movie)}>Add to To Watch</button>
-                            <button className="button red-button" onClick={() => addToAvoid(movie)}>Add to To Avoid</button>
-                            <button className="button" onClick={() => addToSeen(movie)}>Add to Already Seen</button>
+                            <button className="button green-button" onClick={() => addToWatch(movie)}>Want to watch</button>
+                            <button className="button red-button" onClick={() => addToAvoid(movie)}>Don't want to watch</button>
+                            <button className="button" onClick={() => addToSeen(movie)}>Already seen</button>
                         </div>
                     </div>
                 ))}
             </div>
+            {selectedMovie && (
+                <RatingModal
+                    isOpen={isModalOpen}
+                    onClose={closeModal}
+                    onConfirm={handleRatingConfirm}
+                    movie={selectedMovie}
+                    headerText="Rate This Movie"
+                    paragraphText="Select your rating by clicking the stars:"
+                />
+            )}
             <div className="fixed-bottom-container">
-                <button onClick={() => navigate("/")}>Back to To Watch</button>
+                <button onClick={() => navigate("/")}>Go Back</button>
             </div>
         </div>
     );
 }
 
 export default RecommendationsPage;
-
