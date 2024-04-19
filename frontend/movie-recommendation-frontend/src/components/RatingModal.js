@@ -43,11 +43,19 @@ function RatingModal({ isOpen, onClose, onConfirm, movie, headerText, paragraphT
                 <p>{paragraphText}</p>
                 <StarRating />
                 <div className="modal-actions">
-                    <button onClick={() => onConfirm(movie, rating)} className="modal-button confirm">Confirm</button>
+                    <button 
+                        onClick={() => onConfirm(movie, rating)}
+                        className={`modal-button confirm ${rating === 0 ? 'disabled' : ''}`}
+                        disabled={rating === 0}
+                    >
+                        Confirm
+                    </button>
                     <button onClick={() => {
                         onClose();
                         setRating(0);  // Also reset rating when manually closing the modal
-                    }} className="modal-button cancel">Close</button>
+                    }} className="modal-button cancel">
+                        Close
+                    </button>
                 </div>
             </div>
         </div>
