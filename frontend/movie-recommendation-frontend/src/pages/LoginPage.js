@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import './LoginPage.css'
 
 function LoginPage() {
     const { login } = useAuth();
@@ -29,13 +30,23 @@ function LoginPage() {
 
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>Username:<input type="text" value={username} onChange={(e) => setUsername(e.target.value)} /></label>
-            <label>Password:<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></label>
-            <button type="submit">Login</button>
-            <p>Don't have an account? <a href="/signup">Sign up</a></p>
-        </form>
-
+        <div className="login-wrapper">
+            <h2 className="form-title">Movie Recommendation App</h2>
+            <form className="login-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="username">Username:</label>
+                    <input id="username" type="text" className="form-control" value={username}
+                           onChange={(e) => setUsername(e.target.value)}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password:</label>
+                    <input id="password" type="password" className="form-control" value={password}
+                           onChange={(e) => setPassword(e.target.value)}/>
+                </div>
+                <button type="submit" className="btn login-btn">Login</button>
+                <p className="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
+            </form>
+        </div>
     );
 }
 
