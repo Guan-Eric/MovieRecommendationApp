@@ -97,11 +97,44 @@ function SeenPage() {
         });
     };
 
-    const updateMovieRating = (newRating) => {
-        console.log('Updating Rating for:', selectedMovie.title, 'to', newRating);
-        setMovies(currentMovies => currentMovies.map(m => m.id === selectedMovie.id ? { ...m, rating: newRating } : m));
-        setRatingModalOpen(false);
+
+    const updateMovieRating = (movie, newRating) => {
+        console.log('Updating Rating for:', movie.title, 'to', newRating);
+
+        // Construct the request payload
+        const payload = {
+            movieName: movie.title,
+            date: movie.year,
+            statusName: "seen",
+            rating: newRating
+        };
+
+        // Send the PUT request to the server
+        fetch('http://localhost:8080/editmovie', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+            credentials: 'include'
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to update the movie rating');
+            }
+            return response.json();
+        }).then(() => {
+            console.log('Rating updated:', movie.title, 'to', newRating);
+            // Update the local state to reflect the new rating
+            setMovies(currentMovies => currentMovies.map(m => m.id === movie.id ? { ...m, rating: newRating } : m));
+        }).catch(error => {
+            console.error('Error updating movie rating:', error);
+        }).finally(() => {
+            setRatingModalOpen(false); // Close the rating modal
+        });
     };
+
+
+
 
     return (
         <div className="to-watch-container">
