@@ -1,0 +1,88 @@
+/* Global styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+/* Wrapper for the signup page */
+.signup-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+/* Title above the form */
+.form-title {
+    margin-bottom: 40px;
+    font-size: 26px;
+    color: #333;
+    text-align: center;
+}
+
+/* Form styling */
+.signup-form {
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: .5rem;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: .5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.btn.signup-btn {
+    width: 100%;
+    padding: .75rem;
+    border: none;
+    background-color: #0056b3;
+    color: white;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+.btn.signup-btn:hover {
+    background-color: #004494;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.login-link a {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}

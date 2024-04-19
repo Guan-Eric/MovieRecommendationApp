@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import './SignupPage.css'
 
 function SignupPage() {
     const [username, setUsername] = useState('');
@@ -24,24 +25,25 @@ function SignupPage() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Username:
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}/>
-            </label>
-            <label>
-                Password:
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            </label>
-            <label>
-                API Key:
-                <input type="apiKey" value={apikey} onChange={(e) => setApikey(e.target.value)}/>
-            </label>
-            <button type="submit">Signup</button>
-
-            <p>Already have an account? <a href="/login">Login</a></p>
-
-        </form>
+        <div className="signup-wrapper">
+            <h2 className="form-title">Movie Recommendation App</h2>
+            <form className="signup-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="username">Username:</label>
+                    <input id="username" type="text" className="form-control" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password:</label>
+                    <input id="password" type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                </div>
+                <div className="form-group">
+                    <label htmlFor="apikey">API Key:</label>
+                    <input id="apikey" type="text" className="form-control" value={apikey} onChange={(e) => setApikey(e.target.value)}/>
+                </div>
+                <button type="submit" className="btn signup-btn">Signup</button>
+                <p className="login-link">Already have an account? <a href="/login">Login</a></p>
+            </form>
+        </div>
     );
 }
 
