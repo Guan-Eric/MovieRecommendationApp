@@ -4,6 +4,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import GenRecModal from '../components/GenRecModal';
 import './ToWatchPage.css';
 import Sidebar from "../components/Sidebar";
+import { MdDelete } from "react-icons/md";
 
 function AvoidPage() {
     const [movies, setMovies] = useState([]);
@@ -86,7 +87,7 @@ function AvoidPage() {
                             <p>{movie.description}</p>  
                         </div>
                         <div className="movie-actions">
-                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}>✖️</button>
+                            <button className="button red-button" onClick={() => handleRemoveMovie(movie)}><MdDelete/></button>
                         </div>
                     </div>
                 ))}

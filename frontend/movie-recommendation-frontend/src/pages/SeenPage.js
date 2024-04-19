@@ -6,6 +6,7 @@ import GenRecModal from '../components/GenRecModal';
 import './ToWatchPage.css';
 import '../components/RatingModal.css';
 import Sidebar from "../components/Sidebar";
+import { MdDelete } from "react-icons/md";
 
 function StarRating({ rating }) {
     return (
@@ -119,7 +120,7 @@ function SeenPage() {
                             <StarRating rating={movie.rating} />
                         </div>
                         <div className="movie-actions">
-                            <button className="button red-button" onClick={(e) => handleRemoveMovie(e, movie)}>✖️</button>
+                            <button className="button red-button" onClick={(e) => handleRemoveMovie(e, movie)}><MdDelete/></button>
                         </div>
                     </div>
                 ))}
