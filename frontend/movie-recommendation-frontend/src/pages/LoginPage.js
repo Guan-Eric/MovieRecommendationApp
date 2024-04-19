@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './LoginPage.css'
+import logo from '../assets/movy_the_goat_with_title-nobg.png'
 
 function LoginPage() {
     const { login } = useAuth();
@@ -21,7 +22,7 @@ function LoginPage() {
         });
         if (response.ok) {
             const data = await response.json();
-            login(data); // Assuming login updates context and redirects
+            login(data);
         } else {
             const errorData = await response.json();
             alert("Failed to login: " + errorData.error);
@@ -31,7 +32,8 @@ function LoginPage() {
 
     return (
         <div className="login-wrapper">
-            <h2 className="form-title">Movie Recommendation App</h2>
+            <img src={logo} alt="Movie Recommendation App Logo" className="logo"/>
+            {/*<h2 className="form-title">Movie Recommendation App</h2>*/}
             <form className="login-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="username">Username:</label>
