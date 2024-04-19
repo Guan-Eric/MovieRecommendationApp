@@ -5,7 +5,6 @@ import ConfirmModal from '../components/ConfirmModal';
 import RatingModal from '../components/RatingModal';
 import './ToWatchPage.css';
 import Sidebar from "../components/Sidebar";
-import { useAuth } from '../context/AuthContext';
 import { MdDelete } from "react-icons/md";
 import { MdRemoveRedEye } from "react-icons/md";
 
@@ -18,7 +17,6 @@ function ToWatchPage() {
     const [ratingOpen, setRatingOpen] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const navigate = useNavigate();
-    const { logout } = useAuth();
 
     const fetchMovies = () => {
         fetch('http://localhost:8080/towatch', { credentials: 'include' })
